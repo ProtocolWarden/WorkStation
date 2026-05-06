@@ -126,10 +126,10 @@ config/workstation/endpoints.yaml
 # OperatorConsole state — track the editable truth files; ignore generated/compiled context.
 .console/*
 !.console/*.example*
-!.console/active-task.md
-!.console/directives.md
-!.console/mission-log.md
-!.console/objectives.md
+!.console/task.md
+!.console/guidelines.md
+!.console/log.md
+!.console/backlog.md
 config/workstation/services.yaml
 config/workstation/ports.yaml
 config/switchboard/capabilities.yaml

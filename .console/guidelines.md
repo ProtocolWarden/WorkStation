@@ -24,8 +24,8 @@ _Edit when project rules change — not during normal work sessions._
 
 ## After Meaningful Progress
 
-- Update `.console/objectives.md` to reflect completed and remaining work.
-- Update `.console/mission-log.md` with decisions made and rationale.
+- Update `.console/backlog.md` to reflect completed and remaining work.
+- Update `.console/log.md` with decisions made and rationale.
 - Summarize what changed and what's next.
 
 ## What Not to Do
