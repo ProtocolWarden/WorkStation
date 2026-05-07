@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "workstation"
 version = "0.1.0"
+description = "Local developer platform that operates the shared AI coding stack — SwitchBoard, Plane, and aider_local tiny models."
 requires-python = ">=3.11"
 
 [tool.setuptools]
