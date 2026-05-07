@@ -24,24 +24,66 @@ OperationsCenter. Contracts are the surface where components meet.
 
 ## Canonical ownership
 
-> Contracts live in OperationsCenter (`src/operations_center/contracts/`).
+> Orchestration contracts live in **CxRP** (`cxrp.contracts`).
+> Runtime contracts live in **RxP** (`rxp.contracts`).
 
-OperationsCenter is the upstream origin of all work in the system. It proposes
-tasks, it consumes results. Locating contracts here avoids circular dependencies:
-SwitchBoard and kodo consume contracts but do not produce them upstream.
+CxRP and RxP are contract-only repos extracted from OperationsCenter to make
+the contract layer independently versionable and consumable. They have no
+runtime, no implementation, no transport — only models, schemas, and
+validation helpers.
 
-When contracts need to be consumed in SwitchBoard or a backend adapter, they are
-imported from the `operations-center` package or vendored from the same source if a
-consumer cannot depend on that package directly. The source of truth remains
-`src/operations_center/contracts/`.
+OperationsCenter retains internal Pydantic mirrors under
+`src/operations_center/contracts/` for legacy reasons (these predate the
+extraction). The mirrors are bridged to/from canonical CxRP types via
+`src/operations_center/contracts/cxrp_mapper.py`. New consumer code should
+read CxRP types directly at boundaries (e.g. SwitchBoard HTTP, persisted run
+artifacts) and use OC's internal Pydantic types only within the OC service
+layer.
+
+SwitchBoard, OperatorConsole, and ExecutorRuntime depend on CxRP/RxP
+directly (no `operations-center` dependency required).
 
 ---
 
 ## Module layout
 
+**CxRP** — `cxrp.contracts` (canonical orchestration types):
+
+```
+cxrp/
+├── contracts/
+│   ├── __init__.py            — public API; re-exports canonical types
+│   ├── task_proposal.py       — TaskProposal
+│   ├── lane_decision.py       — LaneDecision
+│   ├── execution_request.py   — ExecutionRequest
+│   ├── execution_result.py    — ExecutionResult
+│   ├── execution_target.py    — ExecutionTargetEnvelope
+│   ├── runtime_binding.py     — RuntimeBinding
+│   ├── evidence.py            — Evidence
+│   └── common.py              — shared field types
+├── vocabulary/                — enums (LaneType, RuntimeKind, BackendName, ...)
+└── validation/                — JSON Schema helpers
+```
+
+**RxP** — `rxp.contracts` (canonical runtime types):
+
+```
+rxp/
+├── contracts/
+│   ├── runtime_invocation.py  — RuntimeInvocation
+│   ├── runtime_result.py      — RuntimeResult
+│   └── artifact_descriptor.py — ArtifactDescriptor
+├── vocabulary/                — RuntimeKind, ContractKind, RuntimeStatus
+└── validation/                — JSON Schema helpers
+```
+
+**OC internal mirror** — `src/operations_center/contracts/` (Pydantic
+models, bridged via `cxrp_mapper.py`):
+
 ```
 src/operations_center/contracts/
 ├── __init__.py      — public API, re-exports all canonical types
+├── cxrp_mapper.py   — bridge to/from cxrp.contracts
 ├── enums.py         — TaskType, LaneName, BackendName, ExecutionStatus, ...
 ├── common.py        — TaskTarget, ExecutionConstraints, ValidationProfile,
 │                       BranchPolicy, ChangedFileRef, ValidationSummary
