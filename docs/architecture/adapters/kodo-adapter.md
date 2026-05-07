@@ -1,22 +1,26 @@
 # kodo Adapter Architecture
 
-This document describes the kodo backend adapter — the first execution backend
-in the contract-owned platform architecture.
+This document describes the kodo backend adapter — the original reference
+adapter that established the pattern now followed by archon, openclaw,
+direct_local, and aider_local.
 
 ---
 
-## Why kodo is the first backend
+## Why kodo set the pattern
 
-kodo is the best first integration target because it:
+kodo was chosen as the seed adapter because it:
 
 - supports headless/programmatic execution via subprocess
 - has a clean direct-run posture (not workflow-heavy)
 - returns structured outcome signals via exit code + output
-- has an existing subprocess wrapper (`KodoAdapter`) inside OperationsCenter that
-  the new canonical adapter can delegate to
+- had an existing subprocess wrapper (`KodoAdapter`) inside OperationsCenter that
+  the canonical adapter could delegate to
 
-This adapter establishes the adapter pattern. Archon and OpenClaw follow the
-same structure.
+The adapter established the pattern; archon, openclaw, direct_local, and
+aider_local followed the same structure. All five now delegate subprocess
+execution through ExecutorRuntime via RxP `RuntimeInvocation` (kodo and the
+local lanes use `runtime_kind="subprocess"`; archon and openclaw use
+`runtime_kind="manual"`).
 
 ---
 
@@ -26,18 +30,21 @@ same structure.
 |----------------|-------|
 | Mapping `ExecutionRequest` → kodo-compatible input | kodo adapter |
 | Writing the goal file into the workspace | kodo adapter |
-| Invoking the kodo subprocess | kodo adapter |
-| Capturing stdout, stderr, timing | kodo adapter |
-| Normalizing outputs → `ExecutionResult` | kodo adapter |
+| Building the RxP `RuntimeInvocation` (subprocess kind) | kodo adapter |
+| Normalizing the returned `RuntimeResult` → `ExecutionResult` | kodo adapter |
 | kodo-specific error categorization | kodo adapter |
 
 ## What the adapter does not own
 
+- Subprocess execution mechanics (process-group safety, timeout enforcement,
+  stdout/stderr capture) — that is `ExecutorRuntime`'s job
 - Routing policy — that is SwitchBoard's job
 - Task proposal generation — that is OperationsCenter domain logic
 - Local model hosting — that is WorkStation's job
 - Cross-backend orchestration — that is Archon's job
-- Canonical contract definition — that is `operations_center.contracts`
+- Canonical contract definition — `cxrp` (orchestration) and `rxp` (runtime)
+  own those; OC's `operations_center.contracts` are internal Pydantic mirrors
+  bridged via `cxrp_mapper.py`
 
 ---
 
@@ -140,8 +147,9 @@ If `goal_file_path` is not set in the request, the mapper derives it as
 - writes the goal file before running
 - injects `OPENAI_API_BASE` into subprocess env when `switchboard_url` is set
   (so kodo worker agents route through SwitchBoard)
-- delegates to the existing `KodoAdapter._run_subprocess()` with process-group
-  management and SIGTERM handling
+- builds an RxP `RuntimeInvocation` and delegates to `ExecutorRuntime.run()` —
+  ExecutorRuntime's `SubprocessRunner` owns process-group management,
+  SIGTERM/SIGKILL on timeout, stdout/stderr capture, and exit-code normalization
 - measures wall-clock duration
 - cleans up the goal file after run (even on failure)
 - classifies `timeout_hit`, `rate_limited`, `quota_exhausted` from output

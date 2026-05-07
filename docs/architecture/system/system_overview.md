@@ -207,21 +207,21 @@ The platform owns canonical contracts: `TaskProposal`, `ExecutionRequest`,
 `ExecutionResult`. Backend-native schemas do not define platform architecture. When a
 backend's API changes, only the adapter changes — upstream contracts stay stable.
 
-### Decision B — kodo is the first backend integration target
+### Decision B — kodo set the adapter pattern
 
-kodo is the first execution backend to integrate in full. It has the cleanest
-headless/programmatic integration path via Claude Agent SDK and Codex SDK. This is
-an implementation-order decision, not a declaration that kodo owns the architecture.
-Other backends (Archon for workflow-wrapped executions, OpenClaw) integrate
-through the same adapter boundary.
+kodo was the seed backend integration: clean headless subprocess via Claude
+Agent SDK and Codex SDK, structured exit-code signals, easy to wrap. It
+established the adapter pattern, then archon, openclaw, direct_local, and
+aider_local followed. All five now delegate subprocess execution through
+ExecutorRuntime via RxP `RuntimeInvocation`.
 
 ### Decision C — Archon is optional and bounded
 
 Archon is a useful workflow harness for complex, multi-step executions. It is
 **not** the universal home for all execution lanes. Specifically:
 
-- `aider_local` lane execution remains owned by WorkStation (model deployment) and
-  kodo (execution); it does not require or go through Archon.
+- `aider_local` runs use the dedicated `AiderLocalBackendAdapter`; they do not
+  require or go through Archon.
 - OperationsCenter can invoke kodo directly without Archon when workflow discipline is
   not needed.
 - Archon is useful for `claude_cli` and `codex_cli` lanes when a YAML-defined
