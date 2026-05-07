@@ -2,8 +2,10 @@
 
 Index for the `docs/` tree. WorkStation hosts the **canonical platform
 architecture docs** that other repos reference. The `architecture/` directory
-is now subgrouped by concern: `system/`, `routing/`, `adapters/`, `contracts/`,
-`execution/`, `policy/`.
+is subgrouped by concern: `system/`, `routing/`, `adapters/`, `contracts/`,
+`execution/`, `policy/`. Day-to-day operations material lives under
+`operations/`, reference material under `reference/`, project-level docs under
+`system/`.
 
 ## Architecture (canonical platform docs)
 
@@ -63,18 +65,37 @@ into this directory rather than duplicate.
 ### High-level overview
 
 - [architecture.md](architecture.md) — Top-level architecture entry-point doc
-  (kept for inbound links; new material goes under `architecture/`).
+  (kept at the root for inbound links; new material goes under
+  `architecture/<subdir>/`).
 
 ## Operations
 
+Day-to-day runbook material for operating the local stack.
+
+- [operations/runbook.md](operations/runbook.md) — Day-to-day operational runbook
+  (start/stop/health/troubleshoot).
 - [operations/archon-setup.md](operations/archon-setup.md) — Archon stack
   bring-up and validation.
 - [operations/local-lane-setup.md](operations/local-lane-setup.md) — Local lane
   (aider_local) tiny-model deployment.
-- [environments.md](environments.md) — Environment topology.
-- [health-model.md](health-model.md) — Health-check policy across services.
-- [local_aider_lane.md](local_aider_lane.md) — Operator notes for the
-  `aider_local` lane.
+- [operations/local_aider_lane.md](operations/local_aider_lane.md) — Operator
+  notes for the `aider_local` lane.
+- [operations/health-model.md](operations/health-model.md) — Health-check policy
+  across services.
+- [operations/environments.md](operations/environments.md) — Environment
+  topology.
+- [operations/port-map.md](operations/port-map.md) — Port assignments.
+- [operations/service-map.md](operations/service-map.md) — Per-service map.
+- [operations/startup-flow.md](operations/startup-flow.md) — Startup sequencing.
+
+## Reference
+
+- [reference/providers.md](reference/providers.md) — LLM provider surface
+  reference.
+
+## System
+
+- [system/roadmap.md](system/roadmap.md) — Planned work, out-of-scope items.
 
 ## History
 

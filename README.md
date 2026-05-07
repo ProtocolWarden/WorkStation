@@ -183,7 +183,7 @@ python -m workstation_cli health --json
 | `degraded`  | Required services healthy; one or more optional services down |
 | `unhealthy` | At least one required service is unreachable or non-200       |
 
-See [docs/health-model.md](docs/health-model.md) for full semantics and example JSON output.
+See [docs/operations/health-model.md](docs/operations/health-model.md) for full semantics and example JSON output.
 
 ---
 
@@ -318,10 +318,10 @@ pytest test/smoke/ -v
 | [docs/architecture/system/glossary.md](docs/architecture/system/glossary.md) | Canonical terminology |
 | [docs/architecture/adr/](docs/architecture/adr/) | Architecture decision records |
 | [docs/operations/local-lane-setup.md](docs/operations/local-lane-setup.md) | aider_local lane setup and troubleshooting |
-| [docs/operations.md](docs/operations.md) | Stack runbook (start, stop, logs, etc.) |
-| [docs/health-model.md](docs/health-model.md) | Health semantics, required vs optional, JSON |
-| [docs/service-map.md](docs/service-map.md) | Service inventory |
-| [docs/port-map.md](docs/port-map.md) | Port assignments |
+| [docs/operations/runbook.md](docs/operations/runbook.md) | Stack runbook (start, stop, logs, etc.) |
+| [docs/operations/health-model.md](docs/operations/health-model.md) | Health semantics, required vs optional, JSON |
+| [docs/operations/service-map.md](docs/operations/service-map.md) | Service inventory |
+| [docs/operations/port-map.md](docs/operations/port-map.md) | Port assignments |
 
 ---
 
