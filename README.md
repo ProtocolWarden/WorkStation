@@ -4,10 +4,6 @@ WorkStation is the local developer platform that deploys and operates the shared
 coding stack. It owns the lifecycle of **SwitchBoard**, the **Plane** task board, and
 the **tiny local models** consumed by the `aider_local` coding lane.
 
-WorkStation does not participate in the request path at runtime. It is a pure
-infrastructure and operational concern — Dockerfiles, compose manifests, lifecycle
-scripts, health checks, port assignments, environment injection.
-
 **Ownership boundary:** WorkStation owns everything that makes services *run*. If you
 are asking "where does this service run?", the answer lives here. If you are asking
 "what does this service do?", the answer lives in the service repo. See
@@ -15,6 +11,23 @@ are asking "where does this service run?", the answer lives here. If you are ask
 
 **System architecture:** The full platform design and component roles are documented in
 [`docs/architecture/system_overview.md`](docs/architecture/system_overview.md).
+
+---
+
+## What this repo is
+
+- Service Dockerfiles and compose manifests for SwitchBoard, Plane, archon, and aider_local tiny models
+- Lifecycle scripts (`up.sh`, `down.sh`) and worker shims (`workers.sh`)
+- Port assignments, environment injection, health checks
+- Local CLI helpers under `tools/workstation_cli/` for lane config and stack health
+- Architecture docs (`docs/architecture/`) — the canonical home for cross-repo system design
+
+## What this repo is not
+
+- A request-path participant — WorkStation is invoked by operators and bootstrap scripts only
+- OperationsCenter / SwitchBoard / OperatorConsole — service code lives in those repos
+- A package — installs nothing on `pip install workstation`; it is a deployment harness
+- A scheduler or queue system
 
 ---
 
