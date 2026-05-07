@@ -13,8 +13,7 @@ are asking "where does this service run?", the answer lives here. If you are ask
 "what does this service do?", the answer lives in the service repo. See
 [`docs/architecture/ownership.md`](docs/architecture/ownership.md) for the full model.
 
-**System architecture:** The full platform design, component roles, and the removal of
-the architecture are documented in
+**System architecture:** The full platform design and component roles are documented in
 [`docs/architecture/system_overview.md`](docs/architecture/system_overview.md).
 
 ---
