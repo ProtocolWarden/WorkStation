@@ -19,18 +19,24 @@ the local infrastructure running.
 
 | Component | Role |
 |-----------|------|
-| **WorkStation** | Local infrastructure platform. Runs the services, owns Dockerfiles, compose manifests, lifecycle scripts, and tiny local model deployment. |
+| **WorkStation** | Local infrastructure platform. Runs the services, owns Dockerfiles, compose manifests, lifecycle scripts, and tiny local model deployment. Hosts the canonical platform architecture docs. |
+| **OperatorConsole** | Human entry point. Persistent Zellij workspaces with `.console/` context continuity; `console run` / `console cycle` delegate to OperationsCenter. |
 | **SwitchBoard** | Execution-lane selector. Evaluates a declarative policy and routes each task to the appropriate coding lane. |
 | **OperationsCenter** | Decision and execution engine. Observes repos, generates insights, proposes work, consumes routing, enforces policy, dispatches backend adapters, and drives the autonomy loop. |
-| **Policy** | Pre-execution guardrail layer. Evaluates canonical proposals and routing decisions, then allows, warns, requires review, or blocks. |
-| **Observability** | Retention layer for canonical execution outcomes, artifacts, and normalized traces. |
-| **Tuning** | Evidence-driven recommendation layer. Reads retained outcomes and proposes bounded improvements without silently mutating live policy. |
+| **CxRP** | Contract-only protocol. Canonical orchestration types: `TaskProposal`, `LaneDecision`, `ExecutionRequest`, `ExecutionResult`. Consumed by OperationsCenter, SwitchBoard, OperatorConsole. |
+| **RxP** | Contract-only protocol. Canonical runtime types: `RuntimeInvocation`, `RuntimeResult`, `ArtifactDescriptor`. Consumed by ExecutorRuntime. |
+| **ExecutorRuntime** | Generic runtime mechanics. Dispatches RxP `RuntimeInvocation` by `runtime_kind` to a registered runner (subprocess / manual / HTTP). All OperationsCenter backend adapters (kodo, archon, openclaw, direct_local, aider_local) delegate subprocess execution through ER. |
+| **SourceRegistry** | Source and fork tracking. Resolves named source dependencies, verifies expected SHAs across install kinds, records local-fork patches. Consumed as a library by OperationsCenter. |
+| **Custodian** | Cross-repo audit and maintenance toolkit. Detector framework + plugin loader; consumer repos extend with their own `_custodian/` overlays. |
+| **Policy** | Pre-execution guardrail layer (inside OperationsCenter). Evaluates canonical proposals and routing decisions, then allows, warns, requires review, or blocks. |
+| **Observability** | Retention layer (inside OperationsCenter) for canonical execution outcomes, artifacts, and normalized traces. |
+| **Tuning** | Evidence-driven recommendation layer (inside OperationsCenter). Reads retained outcomes and proposes bounded improvements without silently mutating live policy. |
 | **Archon** | Workflow harness. Imposes structured, reproducible execution steps on top of a coding backend. |
 | **kodo** | Coding execution backend. Orchestrates a multi-agent coding session using Claude Agent SDK or Codex SDK. |
 | **OpenClaw** | Optional outer operator shell. Provides a human-facing runtime above OperationsCenter. Not required for the system to function. |
 | **Claude CLI lane** | Premium execution lane. Runs Claude Code CLI under OAuth/subscription billing. |
 | **Codex CLI lane** | Premium execution lane. Runs Codex CLI under OpenAI subscription billing. |
-| **aider local lane** | Cheap execution lane. Runs Aider against WorkStation-deployed tiny models. No external API calls. |
+| **aider_local lane** | Cheap execution lane. Runs Aider against WorkStation-deployed tiny models. No external API calls. |
 
 ---
 
@@ -57,9 +63,11 @@ the local infrastructure running.
                            │ TaskProposal + LaneDecision
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  OperationsCenter execution boundary                            │
+│  OperationsCenter execution boundary                        │
 │                                                             │
 │  build ExecutionRequest → policy gate → adapter dispatch    │
+│                          ↓ (RxP RuntimeInvocation)          │
+│                  ExecutorRuntime (subprocess/manual/HTTP)   │
 └──────────────┬─────────────────────┬───────────────────────┘
                │                     │                    │
                ▼                     ▼                    ▼
@@ -67,6 +75,9 @@ the local infrastructure running.
         (Claude Code CLI)      (Codex CLI)          (Aider + tiny models)
         OAuth / subscription   OAuth / subscription  WorkStation-deployed
 ```
+
+Cross-repo contracts (CxRP and RxP) are consumed but not duplicated; OC's
+internal Pydantic models mirror the canonical types via `cxrp_mapper.py`.
 
 ```
 OperationsCenter observability + tuning

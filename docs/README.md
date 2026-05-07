@@ -1,9 +1,9 @@
 # WorkStation Documentation
 
 Index for the `docs/` tree. WorkStation hosts the **canonical platform
-architecture docs** that other repos reference (kodo/archon/openclaw adapters,
-contracts, routing, policy guardrails, ownership model). It also holds
-WorkStation-local operations material.
+architecture docs** that other repos reference. The `architecture/` directory
+is now subgrouped by concern: `system/`, `routing/`, `adapters/`, `contracts/`,
+`execution/`, `policy/`.
 
 ## Architecture (canonical platform docs)
 
@@ -12,49 +12,53 @@ into this directory rather than duplicate.
 
 ### System
 
-- [architecture/system_overview.md](architecture/system_overview.md) — Full
-  platform design and component roles.
-- [architecture/ownership.md](architecture/ownership.md) — Repo-level ownership
-  model (who owns what, where each concern lives).
-- [architecture/repo_responsibility_matrix.md](architecture/repo_responsibility_matrix.md) —
+- [architecture/system/system_overview.md](architecture/system/system_overview.md) —
+  Full platform design and component roles.
+- [architecture/system/ownership.md](architecture/system/ownership.md) —
+  Repo-level ownership model.
+- [architecture/system/repo_responsibility_matrix.md](architecture/system/repo_responsibility_matrix.md) —
   Tabular ownership matrix.
-- [architecture/glossary.md](architecture/glossary.md) — Cross-repo terminology.
+- [architecture/system/glossary.md](architecture/system/glossary.md) —
+  Cross-repo terminology.
 - [architecture/adr/](architecture/adr/) — Architecture decision records.
+
+### Routing
+
+- [architecture/routing/operations-center-routing.md](architecture/routing/operations-center-routing.md) ·
+  [examples](architecture/routing/operations-center-routing-examples.md)
+- [architecture/routing/routing-fallback-escalation.md](architecture/routing/routing-fallback-escalation.md) ·
+  [examples](architecture/routing/routing-fallback-escalation-examples.md)
+- [architecture/routing/routing-tuning.md](architecture/routing/routing-tuning.md) ·
+  [examples](architecture/routing/routing-tuning-examples.md)
+
+### Adapters
+
+- [architecture/adapters/kodo-adapter.md](architecture/adapters/kodo-adapter.md) ·
+  [examples](architecture/adapters/kodo-adapter-examples.md)
+- [architecture/adapters/archon-adapter.md](architecture/adapters/archon-adapter.md) ·
+  [examples](architecture/adapters/archon-adapter-examples.md)
+- [architecture/adapters/openclaw-backend-adapter.md](architecture/adapters/openclaw-backend-adapter.md) ·
+  [examples](architecture/adapters/openclaw-backend-adapter-examples.md)
+- [architecture/adapters/openclaw-outer-shell.md](architecture/adapters/openclaw-outer-shell.md) ·
+  [examples](architecture/adapters/openclaw-outer-shell-examples.md)
+- [architecture/adapters/local-lane.md](architecture/adapters/local-lane.md)
 
 ### Contracts
 
-- [architecture/contracts.md](architecture/contracts.md)
-- [architecture/contracts-examples.md](architecture/contracts-examples.md)
+- [architecture/contracts/contracts.md](architecture/contracts/contracts.md) ·
+  [examples](architecture/contracts/contracts-examples.md)
+- [architecture/contracts/upstream-patch-evaluation.md](architecture/contracts/upstream-patch-evaluation.md) ·
+  [examples](architecture/contracts/upstream-patch-evaluation-examples.md)
 
-### Routing & Policy
+### Execution
 
-- [architecture/operations-center-routing.md](architecture/operations-center-routing.md)
-- [architecture/operations-center-routing-examples.md](architecture/operations-center-routing-examples.md)
-- [architecture/routing-fallback-escalation.md](architecture/routing-fallback-escalation.md)
-- [architecture/routing-fallback-escalation-examples.md](architecture/routing-fallback-escalation-examples.md)
-- [architecture/routing-tuning.md](architecture/routing-tuning.md)
-- [architecture/routing-tuning-examples.md](architecture/routing-tuning-examples.md)
-- [architecture/policy-guardrails.md](architecture/policy-guardrails.md)
-- [architecture/policy-guardrails-examples.md](architecture/policy-guardrails-examples.md)
+- [architecture/execution/execution-observability.md](architecture/execution/execution-observability.md) ·
+  [examples](architecture/execution/execution-observability-examples.md)
 
-### Backend Adapters
+### Policy
 
-- [architecture/kodo-adapter.md](architecture/kodo-adapter.md) ·
-  [examples](architecture/kodo-adapter-examples.md)
-- [architecture/archon-adapter.md](architecture/archon-adapter.md) ·
-  [examples](architecture/archon-adapter-examples.md)
-- [architecture/openclaw-backend-adapter.md](architecture/openclaw-backend-adapter.md) ·
-  [examples](architecture/openclaw-backend-adapter-examples.md)
-- [architecture/openclaw-outer-shell.md](architecture/openclaw-outer-shell.md) ·
-  [examples](architecture/openclaw-outer-shell-examples.md)
-- [architecture/local-lane.md](architecture/local-lane.md)
-
-### Cross-Cutting
-
-- [architecture/execution-observability.md](architecture/execution-observability.md) ·
-  [examples](architecture/execution-observability-examples.md)
-- [architecture/upstream-patch-evaluation.md](architecture/upstream-patch-evaluation.md) ·
-  [examples](architecture/upstream-patch-evaluation-examples.md)
+- [architecture/policy/policy-guardrails.md](architecture/policy/policy-guardrails.md) ·
+  [examples](architecture/policy/policy-guardrails-examples.md)
 
 ### High-level overview
 
@@ -76,4 +80,3 @@ into this directory rather than duplicate.
 
 - [history/](history/) — Final-phase checklists, legacy remediation summaries,
   the historical 9router removal notes, and other one-shot historical material.
-

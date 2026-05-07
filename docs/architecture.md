@@ -19,6 +19,6 @@ WorkStation owns:
 
 Current reference docs:
 
-- [`docs/architecture/system_overview.md`](architecture/system_overview.md)
-- [`docs/architecture/repo_responsibility_matrix.md`](architecture/repo_responsibility_matrix.md)
-- [`docs/architecture/ownership.md`](architecture/ownership.md)
+- [`docs/architecture/system/system_overview.md`](architecture/system/system_overview.md)
+- [`docs/architecture/system/repo_responsibility_matrix.md`](architecture/system/repo_responsibility_matrix.md)
+- [`docs/architecture/system/ownership.md`](architecture/system/ownership.md)

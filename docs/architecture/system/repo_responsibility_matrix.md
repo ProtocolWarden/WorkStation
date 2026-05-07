@@ -269,16 +269,30 @@ sits above OperationsCenter and provides a unified control surface.
 OpenClaw (optional)
   └─invokes─► OperationsCenter
                 └─invokes─► SwitchBoard (lane selection)
-                └─invokes─► kodo
-                              └─invokes─► claude_cli lane
-                              └─invokes─► codex_cli lane
-                              └─invokes─► aider_local lane
-                                            └─uses─► tiny models (WorkStation)
-                └─invokes─► Archon (optional)
-                              └─invokes─► kodo (or directly invokes lane SDKs)
+                └─consumes─► CxRP (orchestration contracts)
+                └─consumes─► SourceRegistry (fork tracking, library)
+                └─dispatches via─► ExecutorRuntime
+                                     ├─consumes─► RxP (runtime contracts)
+                                     └─runs adapters─► kodo / archon / openclaw / direct_local / aider_local
+                                                         └─each─► claude_cli / codex_cli / aider_local lane
+                                                                    └─uses─► tiny models (WorkStation)
 
 WorkStation
   └─deploys─► SwitchBoard
+  └─deploys─► Archon (compose profile)
   └─deploys─► tiny local models
   └─manages─► Plane infra
+
+Custodian
+  └─audited by─► every consumer repo via .custodian/config.yaml + optional _custodian/ overlay
 ```
+
+## New repos (extracted 2026-04..05)
+
+| Repo | Role | Consumed by |
+|------|------|-------------|
+| **CxRP** | Orchestration contracts | OperationsCenter, SwitchBoard, OperatorConsole |
+| **RxP** | Runtime contracts | OperationsCenter, ExecutorRuntime |
+| **ExecutorRuntime** | Generic runtime mechanics; dispatch-by-runtime_kind | OperationsCenter (every backend adapter) |
+| **SourceRegistry** | Source/fork tracking | OperationsCenter (library) |
+| **Custodian** | Audit framework | Every repo (via `.custodian/config.yaml`) |

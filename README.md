@@ -7,10 +7,10 @@ the **tiny local models** consumed by the `aider_local` coding lane.
 **Ownership boundary:** WorkStation owns everything that makes services *run*. If you
 are asking "where does this service run?", the answer lives here. If you are asking
 "what does this service do?", the answer lives in the service repo. See
-[`docs/architecture/ownership.md`](docs/architecture/ownership.md) for the full model.
+[`docs/architecture/system/ownership.md`](docs/architecture/system/ownership.md) for the full model.
 
 **System architecture:** The full platform design and component roles are documented in
-[`docs/architecture/system_overview.md`](docs/architecture/system_overview.md).
+[`docs/architecture/system/system_overview.md`](docs/architecture/system/system_overview.md).
 
 ---
 
@@ -70,7 +70,7 @@ WorkStation deploys and manages:
   Plane (:8080)           — task board (OperationsCenter dependency)
   tiny local models       — served locally for aider_local lane
 
-System flow (see docs/architecture/system_overview.md for the full picture):
+System flow (see docs/architecture/system/system_overview.md for the full picture):
 
   OperationsCenter planning → SwitchBoard routing → OperationsCenter execution boundary
                                                      ├── claude_cli   (Claude CLI, OAuth)
@@ -78,7 +78,7 @@ System flow (see docs/architecture/system_overview.md for the full picture):
                                                      └── aider_local  (Aider + WorkStation models)
 ```
 
-See [`docs/architecture/system_overview.md`](docs/architecture/system_overview.md) for
+See [`docs/architecture/system/system_overview.md`](docs/architecture/system/system_overview.md) for
 the full layered view, component roles, and conceptual flow.
 
 ---
@@ -108,7 +108,7 @@ Lane states: `disabled` → `configured` → `starting` → `ready` | `unhealthy
 For full setup and troubleshooting, see
 [`docs/operations/local-lane-setup.md`](docs/operations/local-lane-setup.md).
 For the architectural rationale, see
-[`docs/architecture/local-lane.md`](docs/architecture/local-lane.md).
+[`docs/architecture/adapters/local-lane.md`](docs/architecture/adapters/local-lane.md).
 
 ---
 
@@ -117,10 +117,10 @@ For the architectural rationale, see
 WorkStation carries the canonical architecture docs for the multi-repo platform.
 Recent additions include:
 
-- [docs/architecture/routing-tuning.md](docs/architecture/routing-tuning.md)
-- [docs/architecture/routing-tuning-examples.md](docs/architecture/routing-tuning-examples.md)
-- [docs/architecture/upstream-patch-evaluation.md](docs/architecture/upstream-patch-evaluation.md)
-- [docs/architecture/upstream-patch-evaluation-examples.md](docs/architecture/upstream-patch-evaluation-examples.md)
+- [docs/architecture/routing/routing-tuning.md](docs/architecture/routing/routing-tuning.md)
+- [docs/architecture/routing/routing-tuning-examples.md](docs/architecture/routing/routing-tuning-examples.md)
+- [docs/architecture/contracts/upstream-patch-evaluation.md](docs/architecture/contracts/upstream-patch-evaluation.md)
+- [docs/architecture/contracts/upstream-patch-evaluation-examples.md](docs/architecture/contracts/upstream-patch-evaluation-examples.md)
 
 These documents keep routing tuning, adapter-first integration, and any later
 upstream patch proposals clearly separated from active runtime behavior.
@@ -308,14 +308,14 @@ pytest test/smoke/ -v
 
 | Document | What it covers |
 |----------|----------------|
-| [docs/architecture/system_overview.md](docs/architecture/system_overview.md) | Cross-repo architecture, component roles, architecture decisions |
-| [docs/architecture/contracts.md](docs/architecture/contracts.md) | Canonical cross-repo contract models (Phase 3) |
-| [docs/architecture/contracts-examples.md](docs/architecture/contracts-examples.md) | Example JSON payloads for all contract models |
-| [docs/architecture/kodo-adapter.md](docs/architecture/kodo-adapter.md) | kodo backend adapter architecture (Phase 5) |
-| [docs/architecture/kodo-adapter-examples.md](docs/architecture/kodo-adapter-examples.md) | kodo adapter usage examples |
-| [docs/architecture/local-lane.md](docs/architecture/local-lane.md) | aider_local lane design and boundaries |
-| [docs/architecture/repo_responsibility_matrix.md](docs/architecture/repo_responsibility_matrix.md) | Per-repo owns/does-not-own matrix |
-| [docs/architecture/glossary.md](docs/architecture/glossary.md) | Canonical terminology |
+| [docs/architecture/system/system_overview.md](docs/architecture/system/system_overview.md) | Cross-repo architecture, component roles, architecture decisions |
+| [docs/architecture/contracts/contracts.md](docs/architecture/contracts/contracts.md) | Canonical cross-repo contract models (Phase 3) |
+| [docs/architecture/contracts/contracts-examples.md](docs/architecture/contracts/contracts-examples.md) | Example JSON payloads for all contract models |
+| [docs/architecture/adapters/kodo-adapter.md](docs/architecture/adapters/kodo-adapter.md) | kodo backend adapter architecture (Phase 5) |
+| [docs/architecture/adapters/kodo-adapter-examples.md](docs/architecture/adapters/kodo-adapter-examples.md) | kodo adapter usage examples |
+| [docs/architecture/adapters/local-lane.md](docs/architecture/adapters/local-lane.md) | aider_local lane design and boundaries |
+| [docs/architecture/system/repo_responsibility_matrix.md](docs/architecture/system/repo_responsibility_matrix.md) | Per-repo owns/does-not-own matrix |
+| [docs/architecture/system/glossary.md](docs/architecture/system/glossary.md) | Canonical terminology |
 | [docs/architecture/adr/](docs/architecture/adr/) | Architecture decision records |
 | [docs/operations/local-lane-setup.md](docs/operations/local-lane-setup.md) | aider_local lane setup and troubleshooting |
 | [docs/operations.md](docs/operations.md) | Stack runbook (start, stop, logs, etc.) |

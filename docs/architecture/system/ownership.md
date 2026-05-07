@@ -122,6 +122,73 @@ Plane is a platform dependency — a task-tracking and project-management servic
 **Ownership:** `WorkStation` owns the Plane compose service and infrastructure.
 OperationsCenter owns the Plane client adapter and all usage semantics.
 
+### CxRP and RxP
+
+Contract-only repos. CxRP holds the canonical orchestration types
+(`TaskProposal`, `LaneDecision`, `ExecutionRequest`, `ExecutionResult`); RxP
+holds runtime types (`RuntimeInvocation`, `RuntimeResult`, `ArtifactDescriptor`).
+
+**Owns:**
+- Versioned schemas (JSON Schema), vocabulary enums, validation helpers, examples
+- Contract evolution policy
+
+**Does not own:**
+- Implementation, transport, scheduling, adapters, model integration
+
+Consumer repos (OperationsCenter, SwitchBoard, OperatorConsole, ExecutorRuntime)
+import these types directly; OC additionally maps them to internal Pydantic
+models via `cxrp_mapper.py`.
+
+### ExecutorRuntime
+
+Generic runtime mechanics — dispatches RxP `RuntimeInvocation` by
+`runtime_kind` to a registered runner.
+
+**Owns:**
+- `SubprocessRunner` (process-group safe), `ManualRunner`, `HttpRunner`
+- Dispatch-by-`runtime_kind` registry
+- Environment overlay, working-directory control, timeout enforcement,
+  stdout/stderr capture, exit-code normalization, ArtifactDescriptor collection
+
+**Does not own:**
+- Orchestration, planning, lane selection
+- Backend semantics (kodo, archon, openclaw belong to OperationsCenter)
+- Source/fork tracking (belongs to SourceRegistry)
+
+OC backend adapters (kodo, archon, openclaw, direct_local, aider_local) all
+delegate subprocess execution through ExecutorRuntime.
+
+### SourceRegistry
+
+Source and fork tracking layer. Resolves named source dependencies, verifies
+expected SHAs across install kinds, records local-fork patches and
+upstream-sync intent.
+
+**Owns:**
+- Registry (`SourceEntry`), verification (`VerificationResult`), lifecycle
+  state, patch records, poll/push intent, CLI
+
+**Does not own:**
+- Subprocess execution (ExecutorRuntime), workflow harness (Archon),
+  fork pushing — SR records intent; the operator pushes
+
+OperationsCenter consumes SR as a library.
+
+### Custodian
+
+Cross-repo audit and maintenance toolkit.
+
+**Owns:**
+- Detector framework (C/D/F/U/K/S/A/H/T/G/N/P/R classes)
+- Adapters that wrap external tools (ruff, vulture, ty, semgrep, coverage)
+- Plugin loader so consumer repos can extend with their own `_custodian/` overlays
+- CLI: `custodian-doctor`, `custodian-audit`, `custodian-triage`
+
+**Does not own:**
+- Linting / formatting / type-checking (delegates to wrapped tools)
+- Test running
+- CI integration (consumer repos call Custodian from their own CI)
+
 ---
 
 ## Concrete examples
