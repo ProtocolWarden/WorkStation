@@ -257,5 +257,5 @@ src/operations_center/
 ## See also
 
 - [contracts.md](../contracts/contracts.md) — TaskProposal, LaneDecision canonical types
-- [routing.md](../../../../SwitchBoard/docs/routing.md) — SwitchBoard policy and LaneSelector
+- [routing.md](../../../../SwitchBoard/docs/routing/routing.md) — SwitchBoard policy and LaneSelector
 - [kodo-adapter.md](../adapters/kodo-adapter.md) — how the execution layer consumes ExecutionRequest
