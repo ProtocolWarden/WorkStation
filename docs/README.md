@@ -38,7 +38,8 @@ into this directory rather than duplicate.
 - [architecture/adapters/kodo-adapter.md](architecture/adapters/kodo-adapter.md) ·
   [examples](architecture/adapters/kodo-adapter-examples.md)
 - [architecture/adapters/archon-adapter.md](architecture/adapters/archon-adapter.md) ·
-  [examples](architecture/adapters/archon-adapter-examples.md)
+  [examples](architecture/adapters/archon-adapter-examples.md) ·
+  [real-workflow-integration design](architecture/adapters/archon-real-workflow-integration.md)
 - [architecture/adapters/openclaw-backend-adapter.md](architecture/adapters/openclaw-backend-adapter.md) ·
   [examples](architecture/adapters/openclaw-backend-adapter-examples.md)
 - [architecture/adapters/openclaw-outer-shell.md](architecture/adapters/openclaw-outer-shell.md) ·
