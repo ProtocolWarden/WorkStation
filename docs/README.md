@@ -75,9 +75,5 @@ into this directory rather than duplicate.
 ## History
 
 - [history/](history/) — Final-phase checklists, legacy remediation summaries,
-  and other historical material.
+  the historical 9router removal notes, and other one-shot historical material.
 
-## Migration
-
-- [migration/workstation-9router-removal.md](migration/workstation-9router-removal.md) —
-  Historical 9router removal notes.
