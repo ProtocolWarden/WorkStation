@@ -1,9 +1,10 @@
 repo_key: WorkStation
-src_root: runtime
+src_root: tools
 tests_root: test
 
 # Minimum baseline — runs Custodian's generic C1-C8 only.
-# WorkStation has no `src/` — its primary code lives under `runtime/`.
+# WorkStation has no `src/` — tracked Python lives under `tools/workstation_cli/`.
+# (The `runtime/` directory is a local artifact and is gitignored.)
 # Add `plugins:` and `detectors:` here when this repo grows its own
 # `_custodian/` overlay layer (see OperationsCenter for a worked example).
 
