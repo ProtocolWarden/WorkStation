@@ -22,3 +22,7 @@ _Log significant choices here so they survive context resets._
 _Free-form scratch. Clear periodically — old entries can be deleted once no longer relevant._
 
 ---
+
+## 2026-05-08 — M1: CHANGELOG.md stub (Keep-a-Changelog format)
+
+Added a minimal CHANGELOG.md so M1 (and M5 format check) pass.
