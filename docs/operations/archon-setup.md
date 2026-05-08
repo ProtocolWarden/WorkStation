@@ -1,20 +1,25 @@
 # Archon Service — Local Deployment
 
 This guide covers how WorkStation runs **Archon**, the workflow harness that
-OperationsCenter dispatches to as a `runtime_kind="manual"` backend.
+OperationsCenter dispatches to via `runtime_kind="http_async"` (production
+path, since OC #85) — the abstract `ArchonAdapter` ABC + ManualRunner closure
+remains for `StubArchonAdapter` in tests only.
 
-> **Status (2026-05-06):** the compose profile and health check are in place.
-> The OC concrete `ArchonAdapter` impl currently does a **health-only probe**
-> — workflow dispatch is not yet wired (the Archon API is conversation-driven
-> and async; OC's integration needs design work). See backlog.
+> **Status (2026-05-07):** workflow dispatch is **shipped** end-to-end — see
+> [archon-real-workflow-integration.md](../architecture/adapters/archon-real-workflow-integration.md)
+> for the design and `Real-API findings` section. OC #85 + ExecutorRuntime #6
+> landed the dispatcher; live-validation against a real container the same
+> day surfaced two mapping corrections (now folded back).
 
 ---
 
 ## What this provides
 
-A locally-running Archon instance reachable at `http://localhost:3000` (or whatever
-`PORT_ARCHON` resolves to). OC can probe `GET /api/health` to confirm reachability.
-Real workflow dispatch is the **next** integration milestone, not this one.
+A locally-running Archon instance reachable at `http://localhost:3000`
+(or whatever `PORT_ARCHON` resolves to). OC's `ArchonHttpWorkflowDispatcher`
+drives the conversation create → workflow run → poll-until-terminal →
+status-mapping flow against this instance; `operations-center-archon-probe`
+is the standalone health/list helper.
 
 ---
 
@@ -70,8 +75,15 @@ curl -fsS http://localhost:3000/api/health
 From OperationsCenter:
 
 ```sh
-operations-center-archon-probe   # (placeholder — see backlog)
+operations-center-archon-probe                # health probe (exit 0 if healthy)
+operations-center-archon-probe --list-workflows  # cross-check workflow names
 ```
+
+> **Note:** `--list-workflows` will return `[FAIL] no workflows returned`
+> against a fresh container until you register a codebase with Archon —
+> the listing is `?cwd=`-scoped, not global. Dispatch-by-name still works
+> for bundled defaults (`archon-assist`, `archon-fix-github-issue`,
+> `archon-test-loop-dag`, `archon-refactor-safely`) without registration.
 
 ---
 
@@ -101,6 +113,6 @@ Volumes under `runtime/archon/` persist between restarts.
 
 ## What's deferred
 
-The OC integration currently only probes health. Real workflow dispatch
-(POST conversation → run workflow → poll/stream results → map status) is
-deferred — see backlog item *"OC: real archon workflow integration"*.
+- **Auto-approve policy** for paused approval gates (v2; design pending).
+- **SSE streaming** (current dispatcher polls — sufficient at OC traffic levels).
+- **`--cwd` flag on the probe** so `--list-workflows` can enumerate workflows scoped to a registered codebase. Today it lists empty against a fresh container. Tracked as a v2 nice-to-have.
