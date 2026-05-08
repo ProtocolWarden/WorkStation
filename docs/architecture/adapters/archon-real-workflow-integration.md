@@ -1,8 +1,10 @@
 # Archon Real Workflow Integration — Design
 
-**Status:** Design (not implemented)
+**Status:** Approved design — implementation pending
 **Owner:** OperationsCenter
 **Companion:** [archon-adapter.md](archon-adapter.md) (architectural overview, abstract adapter pattern)
+
+**Approved 2026-05-07.** D1/D2/D3 confirmed by operator; all three open questions resolved inline below. Implementation is mechanical from here — single PR per the plan in this doc.
 
 ---
 
@@ -75,11 +77,14 @@ with `"unknown archon workflow: <name>"`.
 
 ## Decisions
 
-### D1 — `goal_text` maps directly to the workflow message body
+### D1 — `goal_text` maps directly to the workflow message body ✅ confirmed
 
 **Decision:** `ExecutionRequest.goal_text` becomes the `message` field of
 `POST /api/workflows/{name}/run` verbatim. No prefix, no structured
-header.
+header. **Strict** — `task_branch` and other OC-side context do **not**
+get framed into the prompt either (see resolved open question 2 below).
+If a workflow needs branch awareness, that's an Archon-side feature
+request, not an OC frame.
 
 **Rationale:**
 - Archon workflows themselves know how to interpret task shape — the
@@ -101,7 +106,7 @@ the message.
 post-execution invariant (existing pattern). They do **not** flow into
 the archon message.
 
-### D2 — Per-task conversationId; abandon on completion
+### D2 — Per-task conversationId; abandon on completion ✅ confirmed
 
 **Decision:** Each `ExecutionRequest` creates a fresh conversation via
 `POST /api/conversations`, runs the workflow inside it, and abandons it
@@ -129,7 +134,7 @@ conversation — Archon's own retention policy handles that. A
 conversation in `abandoned` state is harmless and queryable for
 diagnostics.
 
-### D3 — `paused` (approval gate) → `outcome="partial"`; no auto-approve in v1
+### D3 — `paused` (approval gate) → `outcome="partial"`; no auto-approve in v1 ✅ confirmed
 
 **Decision:** When a workflow run reaches terminal status `paused`,
 OC's `ArchonRunResult` is:
@@ -256,9 +261,11 @@ production path — it stays for `StubArchonAdapter` test usage only.
      "http.poll_terminal_states": "completed,failed,cancelled,paused",
      "http.poll_success_states": "completed",
      "http.poll_interval_seconds": "2.0",
-     # Metadata for OC observability
+     # Metadata for OC observability — never reaches Archon.
+     # task_branch lives here, NOT in the message body (D1 strict).
      "archon.conversation_id": conv_id,
      "archon.workflow_name": workflow_name,
+     "archon.task_branch": config.task_branch,
    }
    ```
 5. **Dispatch:** `runtime.run(invocation)` → blocks until terminal.
@@ -318,36 +325,18 @@ production path — it stays for `StubArchonAdapter` test usage only.
 
 ---
 
-## Open questions
+## Resolved questions
 
-These are real ambiguities I'd like a signal on before implementation:
+The three implementation ambiguities surfaced during design were resolved 2026-05-07:
 
-1. **`codebaseId` semantics.** Archon's `codebaseId` ties a conversation
-   to a registered codebase. Do we need to register OC's repos with
-   Archon (`POST /api/codebases`) at WorkStation startup, or is
-   `codebaseId` optional and Archon infers from `cwd`? The
-   `createConversationBodySchema` makes `codebaseId` optional — but
-   the Command Center likely expects it for sidebar grouping.
-   **Recommendation:** start with `codebaseId` omitted (let Archon
-   infer); add explicit registration in v2 if operators complain.
+1. **`codebaseId` semantics — omit in v1.** Archon infers from cwd or operates without it; the `createConversationBodySchema` already makes the field optional. If operators want explicit codebase registration for Command Center sidebar grouping, that's a v2 enhancement (`POST /api/codebases` at WorkStation startup) — not blocking for the integration.
 
-2. **`metadata.task_branch` propagation.** Archon workflows don't
-   inherently know about OC's `task_branch`. Should it land in the
-   message body (frame), or as a separate Archon-side variable
-   (requires Archon-side support)?
-   **Recommendation:** put it in the message via a one-line prefix
-   *"On branch {task_branch}: {goal_text}"* — minimal frame, clearly
-   useful, doesn't pretend to be structured. Workflow authors can
-   parse it or ignore it. (This is a small softening of D1; happy to
-   not include if you'd rather keep D1 strict.)
+2. **`task_branch` propagation — strict D1, no prompt prefix.** Earlier draft suggested a one-line *"On branch {task_branch}: {goal_text}"* prefix. Rejected: that's prompt engineering by another name and weakens D1. Instead:
+   - `task_branch` goes into `RuntimeInvocation.metadata` as `archon.task_branch` for OC-side observability.
+   - `goal_text` reaches Archon **verbatim**.
+   - If a future workflow needs branch awareness, that's a real Archon-side feature (structured variable on the workflow context, e.g. `${env.task_branch}` in YAML), not an OC frame around the operator's prompt.
 
-3. **What event signals partial output?** `workflow_events` contains
-   `node_completed` events with `data.node_output`. The "last
-   completed node" output is a reasonable proxy for run output, but
-   if an operator wants the *workflow result* there's no single
-   field for it. Worth checking with the Archon team whether to
-   standardize a `workflow_completed` event with a result field, or
-   whether we always synthesize from the last node.
+3. **Workflow output synthesis — last `node_completed` event in v1; upstream issue for `workflow_completed`.** v1 synthesizes `output_text` from the last `node_completed` event's `data.node_output` field (best available signal today). A follow-up upstream Archon issue/design note will request a standardized `workflow_completed` event carrying a `result` field — once shipped, OC switches to that as the canonical output source.
 
 ---
 
@@ -367,17 +356,17 @@ ManualRunner closure on the production path.
 
 ---
 
-## Decision check before implementation
+## Approval status
 
-The implementation PR should be blocked on a yes/no signal from the
-operator on each of the three design questions where I'd most likely
-get pushback:
+Operator signoff received 2026-05-07:
 
-- **D1** — direct `goal_text` mapping (no structured prefix). Confirm.
-- **D2** — per-task conversation. Confirm.
-- **D3** — `paused` → `partial` outcome, no auto-approve. Confirm.
+| Item | Status |
+|---|---|
+| D1 — direct `goal_text` mapping, no structured prefix | ✅ confirmed (strict — also rejects task_branch prefix) |
+| D2 — per-task conversation, abandon on terminal | ✅ confirmed |
+| D3 — `paused` → `partial`, no auto-approve in v1 | ✅ confirmed |
+| Q1 — codebaseId | resolved (omit in v1) |
+| Q2 — task_branch propagation | resolved (metadata only, no prompt frame) |
+| Q3 — output synthesis | resolved (last `node_completed` event; follow-up upstream Archon issue for `workflow_completed.result`) |
 
-Plus the three open questions (codebaseId, task_branch frame, event
-shape) get explicit answers.
-
-Once those land, implementation is mechanical.
+Implementation can proceed as a single PR per the plan above.
