@@ -61,6 +61,35 @@ operation. Tiny model deployment is required for the `aider_local` lane.
 
 ---
 
+## Quick Start
+
+```bash
+# 1. Copy and edit environment config
+cp .env.example .env
+
+# 2. Copy service configs
+cp config/switchboard/policy.example.yaml      config/switchboard/policy.yaml
+cp config/workstation/endpoints.example.yaml   config/workstation/endpoints.yaml
+cp config/workstation/services.example.yaml    config/workstation/services.yaml
+cp config/workstation/ports.example.yaml       config/workstation/ports.yaml
+
+# 3. Start the stack
+./scripts/up.sh
+
+# 4. Verify health
+./scripts/health.sh
+```
+
+On Windows (PowerShell):
+
+```powershell
+./scripts/bootstrap.ps1   # first-time setup
+./scripts/up.ps1
+./scripts/health.ps1
+```
+
+---
+
 ## Architecture
 
 ```
@@ -124,35 +153,6 @@ Recent additions include:
 
 These documents keep routing tuning, adapter-first integration, and any later
 upstream patch proposals clearly separated from active runtime behavior.
-
----
-
-## Quick Start
-
-```bash
-# 1. Copy and edit environment config
-cp .env.example .env
-
-# 2. Copy service configs
-cp config/switchboard/policy.example.yaml      config/switchboard/policy.yaml
-cp config/workstation/endpoints.example.yaml   config/workstation/endpoints.yaml
-cp config/workstation/services.example.yaml    config/workstation/services.yaml
-cp config/workstation/ports.example.yaml       config/workstation/ports.yaml
-
-# 3. Start the stack
-./scripts/up.sh
-
-# 4. Verify health
-./scripts/health.sh
-```
-
-On Windows (PowerShell):
-
-```powershell
-./scripts/bootstrap.ps1   # first-time setup
-./scripts/up.ps1
-./scripts/health.ps1
-```
 
 ---
 
