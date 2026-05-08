@@ -74,3 +74,7 @@ audit:
     D3:
       # CLI mains exit via SystemExit / sys.exit() — they don't return.
       - tools/workstation_cli/main.py
+    D11:
+      # cmd_lane_status / cmd_lane_health are sibling CLI commands sharing
+      # the read-and-display shape — typology by class.
+      - tools/workstation_cli/lane_cli.py
