@@ -47,3 +47,10 @@ Added a minimal CHANGELOG.md so M1 (and M5 format check) pass.
   docs/architecture/adapters/ (Archon/Kodo/openclaw integrations).
 - DC7: linked the 9router ADR explicitly from docs/README.md.
 
+
+## 2026-05-08 — CI regression guard
+
+Added .github/workflows/custodian-audit.yml + .hooks/pre-push.
+Both run `custodian-multi --fail-on-findings`. CI is the source of
+truth; pre-push catches regressions before they hit GitHub.
+
