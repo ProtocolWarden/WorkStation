@@ -15,7 +15,6 @@ If lane_name is omitted, defaults to 'aider_local' (the only lane in Phase 2).
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 from typing import Optional
@@ -41,8 +40,7 @@ def _load_lane_config(config_path: Optional[Path] = None) -> LocalLaneConfig:
         return default_local_lane_config()
     try:
         return load_local_lane_config(path)
-    except Exception as exc:
-        print(f"Failed to load lane config from {path}: {exc}", file=sys.stderr)
+    except Exception:
         sys.exit(1)
 
 
@@ -52,23 +50,6 @@ def _load_lane_config(config_path: Optional[Path] = None) -> LocalLaneConfig:
 
 def _print_status(status: LaneStatus, *, json_output: bool = False) -> None:
     if json_output:
-        print(json.dumps({
-            "lane": status.lane_name,
-            "state": status.state.value,
-            "ready": status.ready,
-            "models": [
-                {
-                    "name": m.model_name,
-                    "endpoint": m.endpoint,
-                    "reachable": m.reachable,
-                    "latency_ms": m.latency_ms,
-                    "failure_reason": m.failure_reason,
-                }
-                for m in status.models
-            ],
-            "failure_reason": status.failure_reason,
-            "timestamp": status.timestamp,
-        }, indent=2))
         return
 
     state_color = {
@@ -80,27 +61,19 @@ def _print_status(status: LaneStatus, *, json_output: bool = False) -> None:
         LaneState.STOPPED: "\033[90m",
         LaneState.CONFIGURED: "\033[33m",
     }
-    reset = "\033[0m"
-    color = state_color.get(status.state, "")
+    state_color.get(status.state, "")
 
-    print(f"\n  Lane:   {status.lane_name}")
-    print(f"  State:  {color}{status.state.value.upper()}{reset}")
 
     if status.failure_reason:
-        print(f"  Issue:  {status.failure_reason}")
+        pass
 
     if status.models:
-        print()
         for m in status.models:
-            icon = "[OK]  " if m.reachable else "[FAIL]"
-            lat = f"  {m.latency_ms}ms" if m.latency_ms is not None else ""
-            print(f"    {icon}  {m.model_name:<12}  {m.endpoint}{lat}")
             if m.failure_reason:
-                print(f"              {m.failure_reason}")
+                pass
     elif status.state not in (LaneState.DISABLED, LaneState.STOPPED):
-        print("\n    No model services configured.")
+        pass
 
-    print()
 
 
 # ---------------------------------------------------------------------------
@@ -112,41 +85,30 @@ def cmd_lane_start(args) -> int:
     config = _load_lane_config(getattr(args, "config", None))
 
     if config.lane_name != lane_name and lane_name != _AIDER_LOCAL:
-        print(f"Unknown lane: {lane_name}", file=sys.stderr)
         return 1
 
     if not config.enabled:
-        print(f"\n  Lane '{config.lane_name}' is disabled in config.")
-        print("  Set 'lane.enabled: true' in config/workstation/local_lane.yaml to enable.\n")
         return 1
 
-    print(f"=== WorkStation: starting lane '{config.lane_name}' ===")
 
     if not config.models:
-        print(
-            "\n  No model services configured. Add entries under 'models:' in "
-            "config/workstation/local_lane.yaml.\n",
-            file=sys.stderr,
-        )
         return 1
 
     managed = [m.name for m in config.models if m.managed]
     unmanaged = [m.name for m in config.models if not m.managed]
 
     if managed:
-        print(f"  Starting managed services: {', '.join(managed)}")
+        pass
     if unmanaged:
-        print(f"  Checking externally-managed services: {', '.join(unmanaged)}")
+        pass
 
     manager = LocalLaneManager(config)
     status = manager.start()
     _print_status(status)
 
     if status.ready:
-        print("  Lane is ready.")
         return 0
     else:
-        print("  Lane did not reach ready state.", file=sys.stderr)
         return 1
 
 
@@ -155,24 +117,21 @@ def cmd_lane_stop(args) -> int:
     config = _load_lane_config(getattr(args, "config", None))
 
     if config.lane_name != lane_name and lane_name != _AIDER_LOCAL:
-        print(f"Unknown lane: {lane_name}", file=sys.stderr)
         return 1
 
-    print(f"=== WorkStation: stopping lane '{config.lane_name}' ===")
 
     manager = LocalLaneManager(config)
     manager.stop()
-    print(f"  Lane '{config.lane_name}' stopped.\n")
     return 0
 
 
 def cmd_lane_status(args) -> int:
-    lane_name = getattr(args, "lane_name", _AIDER_LOCAL) or _AIDER_LOCAL
+    getattr(args, "lane_name", _AIDER_LOCAL) or _AIDER_LOCAL
     json_output = getattr(args, "json", False)
     config = _load_lane_config(getattr(args, "config", None))
 
     if not json_output:
-        print(f"=== WorkStation: lane status ===")
+        pass
 
     manager = LocalLaneManager(config)
     status = manager.get_status()
@@ -182,12 +141,12 @@ def cmd_lane_status(args) -> int:
 
 
 def cmd_lane_health(args) -> int:
-    lane_name = getattr(args, "lane_name", _AIDER_LOCAL) or _AIDER_LOCAL
+    getattr(args, "lane_name", _AIDER_LOCAL) or _AIDER_LOCAL
     json_output = getattr(args, "json", False)
     config = _load_lane_config(getattr(args, "config", None))
 
     if not json_output:
-        print(f"=== WorkStation: lane health check ===")
+        pass
 
     manager = LocalLaneManager(config)
     status = manager.check_health()
@@ -228,7 +187,6 @@ def cmd_lane_doctor(args) -> int:
     checks.append(("lane enabled", enabled, "" if enabled else "set lane.enabled: true in config"))
 
     # 4. aider binary
-    aider_binary = (config.lane_name if config else None) or "aider"
     aider_path = shutil.which("aider")
     checks.append(("aider binary", aider_path is not None, aider_path or "not found in PATH"))
 
@@ -253,23 +211,13 @@ def cmd_lane_doctor(args) -> int:
     all_passed = all(passed for _, passed, _ in checks)
 
     if json_output:
-        import json
-        print(json.dumps({
-            "lane": _AIDER_LOCAL,
-            "all_passed": all_passed,
-            "checks": [{"name": label, "passed": passed, "detail": detail}
-                       for label, passed, detail in checks],
-        }, indent=2))
+        pass
     else:
-        print(f"\n=== WorkStation: lane doctor [{_AIDER_LOCAL}] ===\n")
         for label, passed, detail in checks:
-            icon = "\033[32m[OK]  \033[0m" if passed else "\033[31m[FAIL]\033[0m"
-            suffix = f"  \033[90m{detail}\033[0m" if detail else ""
-            print(f"  {icon}  {label}{suffix}")
-        print()
+            pass
         if all_passed:
-            print("  \033[32mAll checks passed. Lane is ready.\033[0m\n")
+            pass
         else:
-            print("  \033[31mSome checks failed. See above for details.\033[0m\n")
+            pass
 
     return 0 if all_passed else 1

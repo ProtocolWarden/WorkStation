@@ -65,7 +65,7 @@ def _http_get_ok(url: str, connect_timeout: float, read_timeout: float) -> tuple
             import urllib.error
             req = urllib.request.Request(url, method="GET")
             try:
-                with urllib.request.urlopen(req, timeout=read_timeout) as r:
+                with urllib.request.urlopen(req, timeout=read_timeout):
                     latency_ms = round((_time.monotonic() - start) * 1000, 1)
                     return True, latency_ms, None
             except urllib.error.HTTPError as exc:

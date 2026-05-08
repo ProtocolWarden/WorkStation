@@ -23,6 +23,8 @@ into this directory rather than duplicate.
 - [architecture/system/glossary.md](architecture/system/glossary.md) —
   Cross-repo terminology.
 - [architecture/adr/](architecture/adr/) — Architecture decision records.
+  - [architecture/adr/0001-remove-9router.md](architecture/adr/0001-remove-9router.md) —
+    Decision to retire the 9router prototype.
 
 ### Routing
 
