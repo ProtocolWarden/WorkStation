@@ -1,0 +1,17 @@
+# Grafana datasource provisioning for the WorkStation observability
+# profile. Points the default datasource at the workstation-prometheus
+# container on the platform network.
+#
+# Mounted into the grafana container at
+# /etc/grafana/provisioning/datasources/prometheus.yaml by
+# compose/profiles/observability.yml.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://workstation-prometheus:9090
+    isDefault: true
+    editable: false
