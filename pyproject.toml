@@ -47,3 +47,11 @@ extend-select = [
     "RET503",                                            # D8  — implicit return
     "N818",                                              # N1  — exception class naming
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# CLI tools intentionally:
+#   - swallow exceptions to surface user-friendly errors (BLE001)
+#   - use shell=True for operator-supplied stop_command (S602)
+#   - try/except/pass on best-effort cleanup (S110)
+#   - run user-supplied subprocesses (S603)
+"tools/workstation_cli/**" = ["BLE001", "S602", "S110", "S603"]

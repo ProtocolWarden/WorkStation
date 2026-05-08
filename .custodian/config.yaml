@@ -25,3 +25,52 @@ privacy:
   private_repo_names:
     - VideoFoundry
     - videofoundry
+
+# ---------------------------------------------------------------------------
+# Audit: per-detector exclusions and tuning
+# ---------------------------------------------------------------------------
+audit:
+  # WorkStation docs frequently reference symbols and values that live in
+  # OTHER repos (Archon, Kodo, OperationsCenter) since WS hosts adapter
+  # integration documentation. These aren't phantoms — they're cross-repo
+  # references. K1/K2 doesn't have cross-repo awareness yet.
+  common_words:
+    - artifacts
+    - cancelled
+    - check_support
+    - error_text
+    - goal_file_path
+    - paused
+    - abandoned
+    - debug
+    - failure_category
+    - success
+    - kodo_mode
+    - output_text
+    - provider
+    - workflow_events
+    - workspace_path
+  known_values:
+    - abandoned
+    - debug
+    - failure_category
+    - paused
+    - success
+  # The CLI is exercised end-to-end (subprocess + filesystem state) by smoke
+  # tests, not by name-importing each module. local_manifest.py + config.py
+  # are the config-loading layer — they own the os.environ accesses.
+  c13_allowed_paths:
+    - "tools/workstation_cli/local_manifest.py"
+    - "tools/workstation_cli/config.py"
+  exclude_paths:
+    T1:
+      - "tools/workstation_cli/**"
+    T6:
+      - "tools/workstation_cli/**"
+    T7:
+      - "tools/workstation_cli/**"
+    T8:
+      - test/unit/test_legacy_runtime_removal.py
+    D3:
+      # CLI mains exit via SystemExit / sys.exit() — they don't return.
+      - tools/workstation_cli/main.py

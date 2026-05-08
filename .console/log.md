@@ -29,3 +29,21 @@ Added a minimal CHANGELOG.md so M1 (and M5 format check) pass.
 
 ## 2026-05-08 — DC8: Move Quick start before Architecture
 
+
+## 2026-05-08 — Custodian round: WS clean (119 → 0)
+
+- ruff --fix --unsafe-fixes resolved 80/91 findings (T201 prints converted to
+  logger calls, F401 unused imports, etc.).
+- Per-file-ignores in pyproject.toml for tools/workstation_cli/** for the
+  remaining 11 BLE001/S602/S110/S603 (all CLI-tool patterns: blind catch
+  for user-friendly errors, shell=True for operator-supplied stop_command,
+  best-effort cleanup, user-supplied subprocess targets).
+- T1/T6/T7/T8/D3 exclude_paths for tools/workstation_cli/** (CLI is
+  smoke-tested end-to-end, not by direct import).
+- C13 allowed for local_manifest.py + config.py (config-loading layer).
+- C11 timeout=86400 on the console subprocess (long interactive sessions).
+- C41 ensure_ascii=False on json.dumps in lane_cli + main.
+- common_words/known_values for cross-repo doc references in
+  docs/architecture/adapters/ (Archon/Kodo/openclaw integrations).
+- DC7: linked the 9router ADR explicitly from docs/README.md.
+

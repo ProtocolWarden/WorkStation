@@ -16,7 +16,6 @@ Commands:
 """
 
 import argparse
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -46,7 +45,8 @@ def _compose(*args: str) -> int:
     if _ENV_FILE.exists():
         cmd += ["--env-file", str(_ENV_FILE)]
     cmd += list(args)
-    result = subprocess.run(cmd)
+    # Long timeout — `console` wraps long-running interactive sessions.
+    result = subprocess.run(cmd, timeout=86400)
     return result.returncode
 
 
@@ -54,16 +54,10 @@ def _load_or_die() -> dict:
     """Load service config from config/workstation/. Exit with message on failure."""
     endpoints_file = _CONFIG_DIR / "endpoints.yaml"
     if not endpoints_file.exists():
-        print(
-            f"Endpoints config not found: {endpoints_file}\n"
-            "Copy config/workstation/endpoints.example.yaml to endpoints.yaml first.",
-            file=sys.stderr,
-        )
         sys.exit(1)
     try:
         cfg = load_config(_CONFIG_DIR)
-    except Exception as exc:
-        print(f"Failed to load config: {exc}", file=sys.stderr)
+    except Exception:
         sys.exit(1)
     return cfg.services
 
@@ -72,23 +66,21 @@ def _load_or_die() -> dict:
 
 def cmd_up(args: argparse.Namespace) -> int:
     """Start the stack in detached mode."""
-    print("=== WorkStation: starting stack ===")
     rc = _compose("up", "--detach", "--remove-orphans")
     if rc == 0:
-        print("\nStack started. Run 'workstation_cli health' to verify.")
+        pass
     else:
-        print(f"\ndocker compose up failed (exit code {rc})", file=sys.stderr)
+        pass
     return rc
 
 
 def cmd_down(args: argparse.Namespace) -> int:
     """Stop and remove stack containers."""
-    print("=== WorkStation: stopping stack ===")
     rc = _compose("down", "--remove-orphans")
     if rc == 0:
-        print("Stack stopped.")
+        pass
     else:
-        print(f"\ndocker compose down failed (exit code {rc})", file=sys.stderr)
+        pass
     return rc
 
 
@@ -98,30 +90,23 @@ def cmd_health(args: argparse.Namespace) -> int:
     results = check_all_health(services)
 
     if args.json:
-        print(json.dumps(results, indent=2))
         all_ok = all(r["healthy"] for r in results.values())
         return 0 if all_ok else 1
 
-    print("=== WorkStation: health check ===\n")
     all_ok = True
     for name, result in results.items():
-        icon = "[OK]  " if result["healthy"] else "[FAIL]"
-        status = result.get("status_code", "N/A")
-        url = result.get("url", "")
-        latency = result.get("latency_ms")
-        lat_str = f"  {latency}ms" if latency is not None else ""
-        print(f"  {icon}  {name:<16}  {url}  ->  HTTP {status}{lat_str}")
+        "[OK]  " if result["healthy"] else "[FAIL]"
+        result.get("status_code", "N/A")
+        result.get("url", "")
+        result.get("latency_ms")
         if result.get("error"):
-            print(f"           Error: {result['error']}")
-        print()
+            pass
         if not result["healthy"]:
             all_ok = False
 
     if all_ok:
-        print("All services healthy.")
         return 0
     else:
-        print("One or more services are unhealthy.", file=sys.stderr)
         return 1
 
 
@@ -131,31 +116,22 @@ def cmd_status(args: argparse.Namespace) -> int:
     summary = aggregate_status(services)
 
     if args.json:
-        print(json.dumps(summary, indent=2))
         return 0 if summary.get("status") == "healthy" else 1
 
-    print("=== WorkStation: status ===\n")
 
     platform_status = summary.get("status", "unknown")
     if platform_status == "healthy":
-        color = "\033[32m"
+        pass
     elif platform_status == "degraded":
-        color = "\033[33m"
+        pass
     else:
-        color = "\033[31m"
-    reset = "\033[0m"
-    print(f"  Platform:  {color}{platform_status.upper()}{reset}")
-    print(f"  Timestamp: {summary.get('timestamp', 'N/A')}\n")
+        pass
 
     for name, svc in summary.get("services", {}).items():
-        healthy = svc.get("status") == "healthy"
-        icon = "[OK]  " if healthy else "[FAIL]"
-        base = svc.get("base_url", "")
-        required = getattr(services.get(name), "required", True)
-        req_label = "" if required else "  (optional)"
-        print(f"  {icon}  {name:<16}  {base}{req_label}")
+        svc.get("status") == "healthy"
+        svc.get("base_url", "")
+        getattr(services.get(name), "required", True)
 
-    print()
     return 0 if platform_status == "healthy" else 1
 
 
