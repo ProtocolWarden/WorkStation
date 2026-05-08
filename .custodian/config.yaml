@@ -13,3 +13,15 @@ tools:
   vulture: true
   # mypy/ty: enable when type annotations are stable
   # semgrep: true  # add rules/semgrep/ dir with custom rules to enable
+
+# ---------------------------------------------------------------------------
+# Privacy / boundary enforcement (Custodian B-class)
+# ---------------------------------------------------------------------------
+# Names listed here cause Custodian B1 to fail any tracked file that
+# mentions them. Default excludes (.console/**, config/managed_repos/local/**,
+# docs/history/**, tools/audit/report/**, .custodian/config.yaml itself)
+# spare operator-private and historical surfaces.
+privacy:
+  private_repo_names:
+    - VideoFoundry
+    - videofoundry
