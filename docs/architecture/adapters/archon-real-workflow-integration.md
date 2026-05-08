@@ -1,10 +1,10 @@
 # Archon Real Workflow Integration — Design
 
-**Status:** Approved design — implementation pending
+**Status:** Shipped 2026-05-07 ([OC #85](https://github.com/Velascat/OperationsCenter/pull/85), [ER #6](https://github.com/Velascat/ExecutorRuntime/pull/6)). Live-validated against a real Archon container the same day.
 **Owner:** OperationsCenter
 **Companion:** [archon-adapter.md](archon-adapter.md) (architectural overview, abstract adapter pattern)
 
-**Approved 2026-05-07.** D1/D2/D3 confirmed by operator; all three open questions resolved inline below. Implementation is mechanical from here — single PR per the plan in this doc.
+**Approved 2026-05-07.** D1/D2/D3 confirmed by operator; all three open questions resolved inline below. Implementation landed as a single OC PR + a coordinated ExecutorRuntime PR; live-validation against a real Archon container surfaced two corrections to the table of bundled workflow names and one note on the empty `/api/workflows` listing — see *"Real-API findings"* near the bottom.
 
 ---
 
@@ -62,16 +62,25 @@ workflow name based on `ArchonWorkflowConfig.workflow_type`:
 
 | OC `workflow_type` | Archon workflow name (default) |
 |---|---|
-| `goal` | `archon-goal-default` |
-| `fix_pr` | `archon-fix-github-issue-dag` |
-| `test` | `archon-test-default` |
-| `improve` | `archon-improve-default` |
+| `goal` | `archon-assist` |
+| `fix_pr` | `archon-fix-github-issue` |
+| `test` | `archon-test-loop-dag` |
+| `improve` | `archon-refactor-safely` |
 
-The exact names ship in `config/operations_center.local.yaml` under
-`backends.archon.workflow_names: dict[str, str]` so operators can swap
-in their own YAML workflows without code changes. Defaults assume the
-above names exist; missing-workflow at dispatch time → `outcome="failure"`
-with `"unknown archon workflow: <name>"`.
+These are real names that ship as bundled defaults in
+[Velascat/Archon][Archon] (`packages/workflows/src/defaults/`).
+Operators override via `backends.archon.workflow_names: dict[str, str]`
+in `config/operations_center.local.yaml` when shipping custom YAML
+workflows. Missing-workflow at dispatch time → `outcome="failure"`
+with `"unknown archon workflow: <type>"`.
+
+> **Earlier draft note (kept for archival):** the original mapping
+> proposed names like `archon-goal-default` / `archon-fix-github-issue-dag` /
+> `archon-test-default` / `archon-improve-default`. None of those exist
+> in Archon's bundled defaults. Live validation 2026-05-07 caught the
+> divergence; the table above is the corrected mapping.
+
+[Archon]: https://github.com/Velascat/Archon
 
 ---
 
@@ -368,5 +377,33 @@ Operator signoff received 2026-05-07:
 | Q1 — codebaseId | resolved (omit in v1) |
 | Q2 — task_branch propagation | resolved (metadata only, no prompt frame) |
 | Q3 — output synthesis | resolved (last `node_completed` event; follow-up upstream Archon issue for `workflow_completed.result`) |
+
+---
+
+## Real-API findings (2026-05-07 live validation)
+
+After OC #85 merged, the dispatcher was driven against a live Archon container (built from `Velascat/Archon@fd6d75e7`, deployed via `WorkStation/compose/profiles/archon.yml`). All design assumptions held except three:
+
+### F1 — Bundled-default workflow names differ from the design's table
+
+The original table picked names like `archon-goal-default`, `archon-fix-github-issue-dag`, `archon-test-default`, `archon-improve-default`. None of those exist in `Velascat/Archon@main/.archon/workflows/defaults/`. The corrected mapping (above) uses real bundled defaults — `archon-assist`, `archon-fix-github-issue`, `archon-test-loop-dag`, `archon-refactor-safely`.
+
+**Action taken:** updated `OperationsCenter::DEFAULT_WORKFLOW_NAMES`, `ArchonSettings.workflow_names` defaults, the `archon:` block in the gitignored `config/operations_center.local.yaml`, and the matching test fixtures.
+
+### F2 — `GET /api/workflows` returns empty without a `?cwd=` referencing a registered codebase
+
+The design assumed bundled defaults would surface unconditionally. They do not — Archon's discovery is cwd-scoped (per its `IWorkflowStore` model). Without `?cwd=<path-to-codebase>`, `/api/workflows` returns `{"workflows": []}` even though dispatch-by-name still works for bundled defaults.
+
+**Implication for the operator probe (`operations-center-archon-probe --list-workflows`):** today it prints "no workflows returned" against a fresh container. That's the *correct* signal — it means the operator hasn't registered a codebase with Archon yet. A future enhancement could thread a `--cwd` flag through to the helper to enumerate workflows scoped to a specific codebase. Tracked as a v2 nice-to-have; not blocking.
+
+### F3 — POST /run kickoff returns HTTP 200 (not 202), with `{accepted, status:"started"}`
+
+Confirmed exactly as `Velascat/Archon@main/packages/server/src/routes/api.workflow-runs.test.ts` predicted. Drove the AsyncHttpRunner upgrade in [ER #6](https://github.com/Velascat/ExecutorRuntime/pull/6): 200 + non-terminal status falls through to poll instead of being treated as a synchronous terminal. Live-tested via the dispatcher; the kickoff was accepted, polling proceeded, and the test workflow timed out cleanly (no API key in the test container) — exercising the timeout path through to `outcome="timeout"`.
+
+### What's still outstanding (out of scope for the integration PR)
+
+- **Auto-approve policy** for paused approval gates (v2; needs a separate design on which node IDs are safe to auto-approve).
+- **SSE streaming** (deferred until polling is shown insufficient at scale).
+- **Operator probe `--cwd` flag** (F2 above; nice-to-have).
 
 Implementation can proceed as a single PR per the plan above.
