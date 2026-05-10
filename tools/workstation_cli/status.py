@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: SSPL-1.0
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """
 status.py — aggregate_status() produces a structured JSON-serialisable summary
 of the whole WorkStation stack.

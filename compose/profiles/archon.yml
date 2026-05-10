@@ -9,7 +9,7 @@
 #
 #   GitHub/
 #     WorkStation/   ← this repo
-#     Archon/        ← git clone git@github.com:Velascat/Archon.git
+#     Archon/        ← git clone git@github.com:ProtocolWarden/Archon.git
 #
 # Usage:
 #   docker compose -f compose/docker-compose.yml \

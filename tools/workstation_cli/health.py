@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: SSPL-1.0
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """
 health.py — HTTP health-check helpers.
 

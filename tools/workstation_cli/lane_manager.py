@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: SSPL-1.0
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """
 lane_manager.py — Lifecycle manager for the aider_local execution lane.
 

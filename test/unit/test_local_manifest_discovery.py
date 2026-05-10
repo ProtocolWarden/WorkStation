@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: SSPL-1.0
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """Discovery tests for tools.workstation_cli.local_manifest."""
 from __future__ import annotations
 

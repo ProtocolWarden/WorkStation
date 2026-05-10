@@ -1,6 +1,6 @@
 # Archon Real Workflow Integration — Design
 
-**Status:** Shipped 2026-05-07 ([OC #85](https://github.com/Velascat/OperationsCenter/pull/85), [ER #6](https://github.com/Velascat/ExecutorRuntime/pull/6)). Live-validated against a real Archon container the same day.
+**Status:** Shipped 2026-05-07 ([OC #85](https://github.com/ProtocolWarden/OperationsCenter/pull/85), [ER #6](https://github.com/ProtocolWarden/ExecutorRuntime/pull/6)). Live-validated against a real Archon container the same day.
 **Owner:** OperationsCenter
 **Companion:** [archon-adapter.md](archon-adapter.md) (architectural overview, abstract adapter pattern)
 
@@ -68,7 +68,7 @@ workflow name based on `ArchonWorkflowConfig.workflow_type`:
 | `improve` | `archon-refactor-safely` |
 
 These are real names that ship as bundled defaults in
-[Velascat/Archon][Archon] (`packages/workflows/src/defaults/`).
+[ProtocolWarden/Archon][Archon] (`packages/workflows/src/defaults/`).
 Operators override via `backends.archon.workflow_names: dict[str, str]`
 in `config/operations_center.local.yaml` when shipping custom YAML
 workflows. Missing-workflow at dispatch time → `outcome="failure"`
@@ -80,7 +80,7 @@ with `"unknown archon workflow: <type>"`.
 > in Archon's bundled defaults. Live validation 2026-05-07 caught the
 > divergence; the table above is the corrected mapping.
 
-[Archon]: https://github.com/Velascat/Archon
+[Archon]: https://github.com/ProtocolWarden/Archon
 
 ---
 
@@ -382,11 +382,11 @@ Operator signoff received 2026-05-07:
 
 ## Real-API findings (2026-05-07 live validation)
 
-After OC #85 merged, the dispatcher was driven against a live Archon container (built from `Velascat/Archon@fd6d75e7`, deployed via `WorkStation/compose/profiles/archon.yml`). All design assumptions held except three:
+After OC #85 merged, the dispatcher was driven against a live Archon container (built from `ProtocolWarden/Archon@fd6d75e7`, deployed via `WorkStation/compose/profiles/archon.yml`). All design assumptions held except three:
 
 ### F1 — Bundled-default workflow names differ from the design's table
 
-The original table picked names like `archon-goal-default`, `archon-fix-github-issue-dag`, `archon-test-default`, `archon-improve-default`. None of those exist in `Velascat/Archon@main/.archon/workflows/defaults/`. The corrected mapping (above) uses real bundled defaults — `archon-assist`, `archon-fix-github-issue`, `archon-test-loop-dag`, `archon-refactor-safely`.
+The original table picked names like `archon-goal-default`, `archon-fix-github-issue-dag`, `archon-test-default`, `archon-improve-default`. None of those exist in `ProtocolWarden/Archon@main/.archon/workflows/defaults/`. The corrected mapping (above) uses real bundled defaults — `archon-assist`, `archon-fix-github-issue`, `archon-test-loop-dag`, `archon-refactor-safely`.
 
 **Action taken:** updated `OperationsCenter::DEFAULT_WORKFLOW_NAMES`, `ArchonSettings.workflow_names` defaults, the `archon:` block in the gitignored `config/operations_center.local.yaml`, and the matching test fixtures.
 
@@ -398,15 +398,15 @@ The design assumed bundled defaults would surface unconditionally. They do not �
 
 ### F3 — POST /run kickoff returns HTTP 200 (not 202), with `{accepted, status:"started"}`
 
-Confirmed exactly as `Velascat/Archon@main/packages/server/src/routes/api.workflow-runs.test.ts` predicted. Drove the AsyncHttpRunner upgrade in [ER #6](https://github.com/Velascat/ExecutorRuntime/pull/6): 200 + non-terminal status falls through to poll instead of being treated as a synchronous terminal. Live-tested via the dispatcher; the kickoff was accepted, polling proceeded, and the test workflow timed out cleanly (no API key in the test container) — exercising the timeout path through to `outcome="timeout"`.
+Confirmed exactly as `ProtocolWarden/Archon@main/packages/server/src/routes/api.workflow-runs.test.ts` predicted. Drove the AsyncHttpRunner upgrade in [ER #6](https://github.com/ProtocolWarden/ExecutorRuntime/pull/6): 200 + non-terminal status falls through to poll instead of being treated as a synchronous terminal. Live-tested via the dispatcher; the kickoff was accepted, polling proceeded, and the test workflow timed out cleanly (no API key in the test container) — exercising the timeout path through to `outcome="timeout"`.
 
 ### F4 — Per-request RuntimeBinding has no native channel on stock Archon (forked 2026-05-07)
 
 The original integration left HTTP-mode RuntimeBinding effectively dead. CLI mode honors `.archon/config.yaml` written into the worktree (G-001 mitigation), but the HTTP-mode dispatcher runs Archon in a long-running container whose cwd is fixed at startup — the worktree-config write goes nowhere the container can see, and POST /run accepts only `{conversationId, message}`.
 
-**Action:** rather than wait on upstream, applied the patch on the **Velascat/Archon fork** per the platform's "managed forks first" pattern (SourceRegistry: *adapters first; fork when invariants can't be enforced externally*).
+**Action:** rather than wait on upstream, applied the patch on the **ProtocolWarden/Archon fork** per the platform's "managed forks first" pattern (SourceRegistry: *adapters first; fork when invariants can't be enforced externally*).
 
-**Patch shape** (`Velascat/Archon@feat/per-request-runtime-override`, tracked at `OperationsCenter/patches/archon/PATCH-001.yaml`, contract gap `archon:G-005`):
+**Patch shape** (`ProtocolWarden/Archon@feat/per-request-runtime-override`, tracked at `OperationsCenter/patches/archon/PATCH-001.yaml`, contract gap `archon:G-005`):
 
 | Layer | Change |
 |---|---|
@@ -416,7 +416,7 @@ The original integration left HTTP-mode RuntimeBinding effectively dead. CLI mod
 | `handleMessage` → `handleWorkflowRunCommand` → `dispatchOrchestratorWorkflow` | Thread `runtimeOverride` through to the dispatcher |
 | `dispatchOrchestratorWorkflow` | Apply override by mutating `workflow.provider` / `workflow.model` before any `executeWorkflow` call (mutation safe — workflow is freshly loaded per-run, discarded after dispatch) |
 
-**OC-side wire** (in `Velascat/OperationsCenter@feat/archon-runtime-override-on-dispatch`):
+**OC-side wire** (in `ProtocolWarden/OperationsCenter@feat/archon-runtime-override-on-dispatch`):
 
 - `ArchonWorkflowConfig` gains `provider: Optional[str]` and `model: Optional[str]` fields
 - `ArchonBackendAdapter.execute_and_capture()` threads the existing binder's `(provider, model)` translation into the prepared config via `dataclass.replace`

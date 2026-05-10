@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: SSPL-1.0
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """
 config.py — Unified configuration loader for workstation_cli.
 

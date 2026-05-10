@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: SSPL-1.0
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """LocalManifest path discovery.
 
 WorkStation owns local-runtime infrastructure, including knowing where

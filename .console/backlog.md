@@ -13,7 +13,7 @@ _Update after each meaningful chunk of progress. Keep it short and actionable._
 
 ## Done
 
-- [x] **Archon compose profile** — `compose/profiles/archon.yml` builds from sibling `Velascat/Archon` clone, exposes `PORT_ARCHON` (default 3000), persists state under `runtime/archon`, health-checks `GET /api/health`. Docs in `docs/operations/archon-setup.md`. (2026-05-06)
+- [x] **Archon compose profile** — `compose/profiles/archon.yml` builds from sibling `ProtocolWarden/Archon` clone, exposes `PORT_ARCHON` (default 3000), persists state under `runtime/archon`, health-checks `GET /api/health`. Docs in `docs/operations/archon-setup.md`. (2026-05-06)
 
 ---
 

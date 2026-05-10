@@ -11,7 +11,7 @@ WorkStation is the startup and runtime authority for the platform. It owns the D
 ## Development Setup
 
 ```bash
-git clone https://github.com/Velascat/WorkStation.git
+git clone https://github.com/ProtocolWarden/WorkStation.git
 cd WorkStation
 ```
 

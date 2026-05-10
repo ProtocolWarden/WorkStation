@@ -25,13 +25,13 @@ is the standalone health/list helper.
 
 ## Prerequisites
 
-1. **Archon clone**: a sibling checkout of [Velascat/Archon][Archon] next to
+1. **Archon clone**: a sibling checkout of [ProtocolWarden/Archon][Archon] next to
    WorkStation:
 
    ```text
    GitHub/
      WorkStation/   ← this repo
-     Archon/        ← git clone git@github.com:Velascat/Archon.git
+     Archon/        ← git clone git@github.com:ProtocolWarden/Archon.git
    ```
 
    (The compose build context is `../../Archon` from `compose/`.)
@@ -43,7 +43,7 @@ is the standalone health/list helper.
    `ARCHON_DATABASE_URL` in `.env` if you want to point at a local Postgres
    container or external DB.
 
-[Archon]: https://github.com/Velascat/Archon
+[Archon]: https://github.com/ProtocolWarden/Archon
 
 ---
 
