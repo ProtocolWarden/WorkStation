@@ -15,13 +15,13 @@ config/observability/
 ## Why these ship in the repo
 
 Earlier versions of the observability profile mounted from
-`../../config/observability/` (sibling-of-WorkStation, outside the
+`../../config/observability/` (sibling-of-PlatformDeployment, outside the
 repo). On a clean machine those paths didn't exist, so Docker
 auto-created them as root-owned directories — which then permanently
 broke the next `up` of the prometheus container with the cryptic
 `failed to mount: not a directory` error.
 
-Shipping the skeleton in-repo means a fresh clone of WorkStation
+Shipping the skeleton in-repo means a fresh clone of PlatformDeployment
 boots the observability profile without any manual setup or sudo.
 
 ## Operator overrides

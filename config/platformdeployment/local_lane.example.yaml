@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — aider_local lane configuration
+# PlatformDeployment — aider_local lane configuration
 # =============================================================================
 # Copy to local_lane.yaml before enabling the lane.
 # This file configures the local tiny-model execution lane used by Aider.
@@ -8,10 +8,10 @@
 # Both models below are small enough to run on a machine with 8 GB RAM.
 #
 # Quick start:
-#   1. Copy this file to config/workstation/local_lane.yaml
+#   1. Copy this file to config/platformdeployment/local_lane.yaml
 #   2. Set lane.enabled to true
 #   3. Start your model server (e.g. ollama serve)
-#   4. Run: python -m workstation_cli lane status aider_local
+#   4. Run: python -m platform_deployment_cli lane status aider_local
 # =============================================================================
 
 lane:
@@ -19,7 +19,7 @@ lane:
   enabled: false          # set to true to activate the lane
 
   # Task classes this lane is suitable for. These are hints — SwitchBoard
-  # uses them when selecting lanes, but WorkStation does not enforce them.
+  # uses them when selecting lanes, but PlatformDeployment does not enforce them.
   task_classes:
     - lint_fix
     - simple_edit
@@ -29,7 +29,7 @@ lane:
 
 # Local model services backing this lane.
 # Each entry is a separate inference endpoint. Add start_command if you want
-# WorkStation to manage the server process; leave it null if the server is
+# PlatformDeployment to manage the server process; leave it null if the server is
 # managed externally (e.g. Ollama as a system service).
 #
 # Recommended defaults for constrained hardware (8 GB RAM):
@@ -45,7 +45,7 @@ models:
     health_path: "/api/tags"
     connect_timeout: 5
     read_timeout: 30
-    # start_command: "ollama serve"   # uncomment to let WorkStation start Ollama
+    # start_command: "ollama serve"   # uncomment to let PlatformDeployment start Ollama
     # stop_command: null
 
   - name: secondary
@@ -65,9 +65,9 @@ health_check:
   consecutive_failures_before_unhealthy: 2
 
 
-# Optional local filesystem paths used when WorkStation manages processes.
+# Optional local filesystem paths used when PlatformDeployment manages processes.
 # Tilde (~) is not expanded here — use absolute paths if you need control.
 runtime_paths:
-  model_data_dir: "~/.workstation/models"
-  logs_dir: "~/.workstation/logs/aider_local"
-  pid_file: "~/.workstation/run/aider_local.pid"
+  model_data_dir: "~/.platformdeployment/models"
+  logs_dir: "~/.platformdeployment/logs/aider_local"
+  pid_file: "~/.platformdeployment/run/aider_local.pid"

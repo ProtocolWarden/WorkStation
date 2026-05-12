@@ -9,7 +9,7 @@ this repo.
 
 ---
 
-## WorkStation
+## PlatformDeployment
 
 **Primary responsibility:** Local infrastructure platform. Everything required to make
 services run on a developer machine.
@@ -35,7 +35,7 @@ services run on a developer machine.
 - Plane infrastructure (separate script-managed stack)
 - Deployment and serving of tiny local models for `aider_local` lane
 
-**Out of scope — WorkStation does not own:**
+**Out of scope — PlatformDeployment does not own:**
 - What SwitchBoard's policy rules do or how lanes are scored
 - What OperationsCenter decides to work on next
 - What Archon's workflow steps are
@@ -65,7 +65,7 @@ sensitivity, urgency) to feed lane scoring.
 **Lanes SwitchBoard selects between:**
 - `claude_cli` — Claude Code CLI, premium, OAuth/subscription
 - `codex_cli` — Codex CLI, premium, OpenAI subscription
-- `aider_local` — Aider with WorkStation tiny models, local, free
+- `aider_local` — Aider with PlatformDeployment tiny models, local, free
 
 **In scope:**
 - Request classification (task type, complexity, estimated cost, urgency)
@@ -122,8 +122,8 @@ invocation wrapper, execution artifact analysis).
 **Out of scope — OperationsCenter does not own:**
 - Workflow structure and multi-step execution discipline (that is Archon's job)
 - Lane selection policy (that is SwitchBoard's job)
-- Model deployment or infrastructure (that is WorkStation's job)
-- The Plane stack itself (WorkStation owns Plane infra; OperationsCenter owns the client)
+- Model deployment or infrastructure (that is PlatformDeployment's job)
+- The Plane stack itself (PlatformDeployment owns Plane infra; OperationsCenter owns the client)
 
 ---
 
@@ -155,7 +155,7 @@ GitHub, web UI, CLI).
 **Out of scope — Archon does not own:**
 - Strategic decisions about what work to do (that is OperationsCenter's job)
 - Lane selection policy (that is SwitchBoard's job)
-- Infrastructure deployment (that is WorkStation's job)
+- Infrastructure deployment (that is PlatformDeployment's job)
 - kodo's orchestration logic (Archon uses Claude/Codex SDK directly, not kodo)
 
 > **Archon is optional.** OperationsCenter can invoke kodo directly without Archon when
@@ -192,7 +192,7 @@ structured artifact output.
 - System-wide policy or lane selection (that is SwitchBoard's job)
 - Task proposal and prioritization (that is OperationsCenter's job)
 - Workflow structure and multi-step DAG (that is Archon's job)
-- Infrastructure deployment (that is WorkStation's job)
+- Infrastructure deployment (that is PlatformDeployment's job)
 - Long-range strategy about what repos to improve
 
 ---
@@ -208,8 +208,8 @@ sits above OperationsCenter and provides a unified control surface.
 |-------|--------|
 | **Inputs** | Operator commands, context files, platform events |
 | **Outputs** | Directed work requests to OperationsCenter, workspace state |
-| **Dependencies** | OperationsCenter, WorkStation lifecycle scripts |
-| **Invokes** | OperationsCenter (directs what to work on), WorkStation scripts (stack lifecycle) |
+| **Dependencies** | OperationsCenter, PlatformDeployment lifecycle scripts |
+| **Invokes** | OperationsCenter (directs what to work on), PlatformDeployment scripts (stack lifecycle) |
 | **Invoked by** | Human operator |
 
 **In scope:**
@@ -239,7 +239,7 @@ sits above OperationsCenter and provides a unified control surface.
 | **Auth** | OAuth / Claude.ai subscription — no API key |
 | **Strengths** | Highest capability, complex reasoning and refactors |
 | **Cost profile** | Premium (subscription) |
-| **WorkStation role** | Runs on host machine; no WorkStation deployment needed |
+| **PlatformDeployment role** | Runs on host machine; no PlatformDeployment deployment needed |
 
 ### Codex CLI Lane
 
@@ -249,7 +249,7 @@ sits above OperationsCenter and provides a unified control surface.
 | **Auth** | OpenAI subscription — no API key |
 | **Strengths** | Strong code generation, OpenAI subscription billing |
 | **Cost profile** | Premium (subscription) |
-| **WorkStation role** | Runs on host machine; no WorkStation deployment needed |
+| **PlatformDeployment role** | Runs on host machine; no PlatformDeployment deployment needed |
 
 ### aider local Lane
 
@@ -259,7 +259,7 @@ sits above OperationsCenter and provides a unified control surface.
 | **Auth** | None — hits locally deployed models only |
 | **Strengths** | Zero external API cost, always available, fast for simple edits |
 | **Cost profile** | Free / local compute only |
-| **WorkStation role** | WorkStation deploys and serves the tiny models consumed by this lane |
+| **PlatformDeployment role** | PlatformDeployment deploys and serves the tiny models consumed by this lane |
 
 ---
 
@@ -275,9 +275,9 @@ OpenClaw (optional)
                                      ├─consumes─► RxP (runtime contracts)
                                      └─runs adapters─► kodo / archon / openclaw / direct_local / aider_local
                                                          └─each─► claude_cli / codex_cli / aider_local lane
-                                                                    └─uses─► tiny models (WorkStation)
+                                                                    └─uses─► tiny models (PlatformDeployment)
 
-WorkStation
+PlatformDeployment
   └─deploys─► SwitchBoard
   └─deploys─► Archon (compose profile)
   └─deploys─► tiny local models

@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — status.ps1
+# PlatformDeployment — status.ps1
 # Full status summary: Docker Compose service state + health checks.
 # =============================================================================
 #Requires -Version 5.1
@@ -13,7 +13,7 @@ $ScriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot    = Split-Path -Parent $ScriptDir
 $ComposeFile = Join-Path $RepoRoot 'compose\docker-compose.yml'
 
-Write-Host "=== WorkStation: status ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: status ===" -ForegroundColor Cyan
 Write-Host "Timestamp: $(Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ' -AsUTC)"
 Write-Host ""
 
@@ -31,7 +31,7 @@ Write-Host "-- HTTP health checks --" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "-- Container resource usage --" -ForegroundColor DarkGray
 try {
-    docker stats --no-stream workstation-switchboard
+    docker stats --no-stream platformdeployment-switchboard
 } catch {
     Write-Host "  (containers not running)" -ForegroundColor Yellow
 }

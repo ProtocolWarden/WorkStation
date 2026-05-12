@@ -98,7 +98,7 @@ class LaneAvailability:
     Current availability snapshot combining capability and live status.
 
     Consumers (e.g. SwitchBoard) can read this to decide whether the
-    local lane is usable right now. WorkStation does not make the routing
+    local lane is usable right now. PlatformDeployment does not make the routing
     decision — it only reports availability.
     """
 

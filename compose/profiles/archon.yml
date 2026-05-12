@@ -1,14 +1,14 @@
 # =============================================================================
-# WorkStation — Archon Profile
+# PlatformDeployment — Archon Profile
 # =============================================================================
 # Adds Archon to the running stack. Archon is the workflow harness OC
 # dispatches to via ``runtime_kind="manual"`` (PR archon Phase 3).
 #
 # Build context: archon is a TypeScript/bun monorepo checked out as a
-# sibling of WorkStation:
+# sibling of PlatformDeployment:
 #
 #   GitHub/
-#     WorkStation/   ← this repo
+#     PlatformDeployment/   ← this repo
 #     Archon/        ← git clone git@github.com:ProtocolWarden/Archon.git
 #
 # Usage:
@@ -28,7 +28,7 @@ services:
       context: ../../Archon
       dockerfile: Dockerfile
     image: archon:latest
-    container_name: workstation-archon
+    container_name: platformdeployment-archon
     restart: unless-stopped
     logging:
       driver: "json-file"

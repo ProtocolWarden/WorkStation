@@ -18,7 +18,7 @@ import sys
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO_ROOT / "tools"))
 
-from workstation_cli.config import ServiceConfig, load_endpoints  # noqa: E402
+from platform_deployment_cli.config import ServiceConfig, load_endpoints  # noqa: E402
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -157,18 +157,18 @@ class TestLoadEndpointsErrors:
 
 class TestExampleFileParses:
     def test_example_file_is_valid(self):
-        example = _REPO_ROOT / "config" / "workstation" / "endpoints.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "endpoints.example.yaml"
         assert example.exists(), f"Example file missing: {example}"
         result = load_endpoints(example)
         assert len(result) >= 1
         assert "switchboard" in result
 
     def test_example_switchboard_port(self):
-        example = _REPO_ROOT / "config" / "workstation" / "endpoints.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "endpoints.example.yaml"
         result = load_endpoints(example)
         assert ":20401" in result["switchboard"].url
 
     def test_example_contains_only_active_endpoints(self):
-        example = _REPO_ROOT / "config" / "workstation" / "endpoints.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "endpoints.example.yaml"
         result = load_endpoints(example)
         assert set(result) == {"switchboard", "status"}

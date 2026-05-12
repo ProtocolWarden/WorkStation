@@ -22,7 +22,7 @@ selected to fit comfortably in CPU RAM.
 ## Local-first assumptions
 
 This lane assumes:
-- All model services run on the same machine as WorkStation
+- All model services run on the same machine as PlatformDeployment
 - No external API calls or provider credentials are needed
 - The lane may not be available during machine sleep/hibernate
 - Startup time depends on model load time (typically 5–20 seconds with CPU)
@@ -31,7 +31,7 @@ This lane assumes:
 
 ## Step 1 — Install a model server
 
-WorkStation expects the model service to expose a health endpoint. The recommended
+PlatformDeployment expects the model service to expose a health endpoint. The recommended
 server is **Ollama** (https://ollama.ai).
 
 ```bash
@@ -67,10 +67,10 @@ ollama list
 Copy the example config and enable the lane:
 
 ```bash
-cp config/workstation/local_lane.example.yaml config/workstation/local_lane.yaml
+cp config/platformdeployment/local_lane.example.yaml config/platformdeployment/local_lane.yaml
 ```
 
-Open `config/workstation/local_lane.yaml` and set:
+Open `config/platformdeployment/local_lane.yaml` and set:
 
 ```yaml
 lane:
@@ -85,7 +85,7 @@ models:
     endpoint: "http://localhost:11434"   # Ollama default
 ```
 
-If you want WorkStation to start Ollama automatically, add:
+If you want PlatformDeployment to start Ollama automatically, add:
 
 ```yaml
 models:
@@ -94,20 +94,20 @@ models:
 ```
 
 If Ollama is managed by systemd (typical Linux install), leave `start_command` null
-and let WorkStation check reachability only.
+and let PlatformDeployment check reachability only.
 
 ---
 
 ## Step 4 — Check status
 
 ```bash
-python -m workstation_cli lane status aider_local
+python -m platform_deployment_cli lane status aider_local
 ```
 
 If Ollama is running and models are loaded, you should see:
 
 ```
-=== WorkStation: lane status ===
+=== PlatformDeployment: lane status ===
 
   Lane:   aider_local
   State:  READY
@@ -132,10 +132,10 @@ If a model service is not reachable:
 
 ## Step 5 — Start managed services (optional)
 
-If `start_command` is set in the config, WorkStation can start the services:
+If `start_command` is set in the config, PlatformDeployment can start the services:
 
 ```bash
-python -m workstation_cli lane start aider_local
+python -m platform_deployment_cli lane start aider_local
 ```
 
 This polls until all services are reachable (up to `startup_timeout_seconds`) and
@@ -146,10 +146,10 @@ reports the final state. Use this when you want a single command to bring the la
 ## Stopping the lane
 
 ```bash
-python -m workstation_cli lane stop aider_local
+python -m platform_deployment_cli lane stop aider_local
 ```
 
-This terminates any processes started by WorkStation. Externally-managed services
+This terminates any processes started by PlatformDeployment. Externally-managed services
 (e.g. Ollama as a system service) are not affected.
 
 ---
@@ -158,12 +158,12 @@ This terminates any processes started by WorkStation. Externally-managed service
 
 | Command | What it does |
 |---------|--------------|
-| `python -m workstation_cli lane status aider_local` | Show current state and model health |
-| `python -m workstation_cli lane health aider_local` | Run a live health check |
-| `python -m workstation_cli lane start aider_local` | Start managed services, wait for readiness |
-| `python -m workstation_cli lane stop aider_local` | Stop managed services |
-| `python -m workstation_cli lane status --json aider_local` | Machine-readable status |
-| `python -m workstation_cli lane health --json aider_local` | Machine-readable health check |
+| `python -m platform_deployment_cli lane status aider_local` | Show current state and model health |
+| `python -m platform_deployment_cli lane health aider_local` | Run a live health check |
+| `python -m platform_deployment_cli lane start aider_local` | Start managed services, wait for readiness |
+| `python -m platform_deployment_cli lane stop aider_local` | Stop managed services |
+| `python -m platform_deployment_cli lane status --json aider_local` | Machine-readable status |
+| `python -m platform_deployment_cli lane health --json aider_local` | Machine-readable health check |
 
 ---
 
@@ -181,7 +181,7 @@ A partially-reachable lane (some models up, some down) reports `UNHEALTHY`, not
 
 ### "No model services configured"
 
-`config/workstation/local_lane.yaml` has no entries under `models:`. Add at least
+`config/platformdeployment/local_lane.yaml` has no entries under `models:`. Add at least
 one model entry with `name`, `model_id`, and `endpoint`.
 
 ### "Model services unreachable: primary"
@@ -206,14 +206,14 @@ The model took longer than `startup_timeout_seconds` to load. Either:
 
 ### Lane is DISABLED
 
-`lane.enabled` is `false` in `config/workstation/local_lane.yaml`. Set it to `true`.
+`lane.enabled` is `false` in `config/platformdeployment/local_lane.yaml`. Set it to `true`.
 
 ### Config file not found
 
-`config/workstation/local_lane.yaml` does not exist. Copy the example:
+`config/platformdeployment/local_lane.yaml` does not exist. Copy the example:
 
 ```bash
-cp config/workstation/local_lane.example.yaml config/workstation/local_lane.yaml
+cp config/platformdeployment/local_lane.example.yaml config/platformdeployment/local_lane.yaml
 ```
 
 ---

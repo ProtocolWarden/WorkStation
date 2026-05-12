@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — up.sh
+# PlatformDeployment — up.sh
 # Single entrypoint to start the full platform stack.
 #
 # Usage:
@@ -19,13 +19,13 @@ CURL_TIMEOUT=3
 SWITCHBOARD_WAIT=60   # seconds to wait for SwitchBoard health
 
 # ── Logging ───────────────────────────────────────────────────────────────────
-_log()  { printf '[WorkStation] %s\n' "$*"; }
-_ok()   { printf '[WorkStation] %-44s [OK]\n'   "$1"; }
-_warn() { printf '[WorkStation] %-44s [WARN] %s\n' "$1" "$2"; }
-_skip() { printf '[WorkStation] %-44s [SKIP] %s\n' "$1" "$2"; }
-_fail() { printf '[WorkStation] %-44s [FAIL] %s\n' "$1" "$2" >&2; exit 1; }
+_log()  { printf '[PlatformDeployment] %s\n' "$*"; }
+_ok()   { printf '[PlatformDeployment] %-44s [OK]\n'   "$1"; }
+_warn() { printf '[PlatformDeployment] %-44s [WARN] %s\n' "$1" "$2"; }
+_skip() { printf '[PlatformDeployment] %-44s [SKIP] %s\n' "$1" "$2"; }
+_fail() { printf '[PlatformDeployment] %-44s [FAIL] %s\n' "$1" "$2" >&2; exit 1; }
 
-echo "=== WorkStation: starting platform ==="
+echo "=== PlatformDeployment: starting platform ==="
 echo ""
 
 # ── Step 1: Environment ───────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ fi
 echo ""
 
 # ── Summary ───────────────────────────────────────────────────────────────────
-echo "=== WorkStation ready ==="
+echo "=== PlatformDeployment ready ==="
 echo ""
 printf '  %-16s http://localhost:%s\n' "SwitchBoard" "${PORT_SWITCHBOARD}"
 if [[ "${PLANE_ENABLED}" == "true" ]]; then

@@ -1,21 +1,21 @@
-# Contributing to WorkStation
+# Contributing to PlatformDeployment
 
-WorkStation is the startup and runtime authority for the platform. It owns the Docker Compose stack, environment configuration, service health definitions, and the local-lane execution environment.
+PlatformDeployment is the startup and runtime authority for the platform. It owns the Docker Compose stack, environment configuration, service health definitions, and the local-lane execution environment.
 
 ## Before You Start
 
 - Check open issues to avoid duplicate work
 - For significant changes, open an issue first to discuss the approach
-- WorkStation changes often have downstream effects — test the full stack locally before submitting
+- PlatformDeployment changes often have downstream effects — test the full stack locally before submitting
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/ProtocolWarden/WorkStation.git
-cd WorkStation
+git clone https://github.com/ProtocolWarden/PlatformDeployment.git
+cd PlatformDeployment
 ```
 
-WorkStation is primarily shell scripts and Docker Compose files. A Python virtualenv is used for tooling and tests:
+PlatformDeployment is primarily shell scripts and Docker Compose files. A Python virtualenv is used for tooling and tests:
 
 ```bash
 python3 -m venv .venv
@@ -39,7 +39,7 @@ Unit tests run without a live stack. Smoke tests that require Docker are marked 
 bash up.sh
 ```
 
-WorkStation is the **only** startup authority — do not start platform services by other means.
+PlatformDeployment is the **only** startup authority — do not start platform services by other means.
 
 ## Project Structure
 
@@ -57,7 +57,7 @@ docs/
 
 ## Architectural Constraints
 
-WorkStation is the **startup authority only**. Contributions must not:
+PlatformDeployment is the **startup authority only**. Contributions must not:
 
 - Add planning or proposal logic (belongs in OperationsCenter)
 - Add routing logic (belongs in SwitchBoard)

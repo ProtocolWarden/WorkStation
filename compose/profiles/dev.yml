@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — Dev Profile
+# PlatformDeployment — Dev Profile
 # =============================================================================
 # Extends core with developer tooling:
 #   - Mailpit (local SMTP catcher)
@@ -23,7 +23,7 @@ services:
   # ── Mailpit — local SMTP / email catcher ──────────────────────────────────
   mailpit:
     image: axllent/mailpit:latest
-    container_name: workstation-mailpit
+    container_name: platformdeployment-mailpit
     restart: unless-stopped
     ports:
       - "1025:1025"   # SMTP

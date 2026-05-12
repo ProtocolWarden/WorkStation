@@ -1,6 +1,6 @@
 # Operations
 
-Day-to-day operational runbook for the WorkStation stack.
+Day-to-day operational runbook for the PlatformDeployment stack.
 
 ---
 
@@ -152,7 +152,7 @@ Then restart to apply:
 
 ## Plane (OperationsCenter dependency)
 
-Plane is managed by a separate script, not by `docker-compose.yml`. WorkStation is the canonical owner of this infra.
+Plane is managed by a separate script, not by `docker-compose.yml`. PlatformDeployment is the canonical owner of this infra.
 
 ```bash
 # Start Plane (installs on first run)
@@ -169,7 +169,7 @@ Runtime data is stored in `runtime/plane/` (gitignored). On first run, `scripts/
 
 To configure the port or version before first startup, copy `config/plane/.env.example` to `config/plane/.env` and edit.
 
-After Plane is running, open `http://localhost:8080` to complete workspace setup (admin account, project, API token). These credentials go in OperationsCenter's config — not in WorkStation.
+After Plane is running, open `http://localhost:8080` to complete workspace setup (admin account, project, API token). These credentials go in OperationsCenter's config — not in PlatformDeployment.
 
 ---
 
@@ -210,7 +210,7 @@ The stack is stateless by default (no persistent volumes in the core profile). C
 
 ```bash
 docker run --rm \
-  -v workstation-prometheus-data:/data \
+  -v platformdeployment-prometheus-data:/data \
   -v $(pwd)/backups:/backup \
   alpine tar czf /backup/prometheus-$(date +%Y%m%d).tar.gz /data
 ```

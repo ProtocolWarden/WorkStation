@@ -10,7 +10,7 @@ conflict with what is written here.
 
 OperationsCenter proposes work, SwitchBoard selects the lane and backend,
 OperationsCenter's execution boundary enforces policy and dispatches adapters,
-Observability records, Tuning recommends improvements, and WorkStation keeps
+Observability records, Tuning recommends improvements, and PlatformDeployment keeps
 the local infrastructure running.
 
 ---
@@ -19,7 +19,7 @@ the local infrastructure running.
 
 | Component | Role |
 |-----------|------|
-| **WorkStation** | Local infrastructure platform. Runs the services, owns Dockerfiles, compose manifests, lifecycle scripts, and tiny local model deployment. Hosts the canonical platform architecture docs. |
+| **PlatformDeployment** | Local infrastructure platform. Runs the services, owns Dockerfiles, compose manifests, lifecycle scripts, and tiny local model deployment. Hosts the canonical platform architecture docs. |
 | **OperatorConsole** | Human entry point. Persistent Zellij workspaces with `.console/` context continuity; `console run` / `console cycle` delegate to OperationsCenter. |
 | **SwitchBoard** | Execution-lane selector. Evaluates a declarative policy and routes each task to the appropriate coding lane. |
 | **OperationsCenter** | Decision and execution engine. Observes repos, generates insights, proposes work, consumes routing, enforces policy, dispatches backend adapters, and drives the autonomy loop. |
@@ -36,7 +36,7 @@ the local infrastructure running.
 | **OpenClaw** | Optional outer operator shell. Provides a human-facing runtime above OperationsCenter. Not required for the system to function. |
 | **Claude CLI lane** | Premium execution lane. Runs Claude Code CLI under OAuth/subscription billing. |
 | **Codex CLI lane** | Premium execution lane. Runs Codex CLI under OpenAI subscription billing. |
-| **aider_local lane** | Cheap execution lane. Runs Aider against WorkStation-deployed tiny models. No external API calls. |
+| **aider_local lane** | Cheap execution lane. Runs Aider against PlatformDeployment-deployed tiny models. No external API calls. |
 
 ---
 
@@ -73,7 +73,7 @@ the local infrastructure running.
                ▼                     ▼                    ▼
         claude_cli             codex_cli            aider_local
         (Claude Code CLI)      (Codex CLI)          (Aider + tiny models)
-        OAuth / subscription   OAuth / subscription  WorkStation-deployed
+        OAuth / subscription   OAuth / subscription  PlatformDeployment-deployed
 ```
 
 Cross-repo contracts (CxRP and RxP) are consumed but not duplicated; OC's
@@ -84,7 +84,7 @@ OperationsCenter observability + tuning
 ├── records: canonical ExecutionResult / ExecutionRecord evidence
 └── recommends: bounded reviewable tuning changes
 
-WorkStation
+PlatformDeployment
 ├── deploys: SwitchBoard container
 ├── deploys: tiny local models for aider_local lane
 ├── manages: Plane infrastructure (OperationsCenter dependency)
@@ -155,7 +155,7 @@ graph TD
     CC[claude_cli lane]
     CX[codex_cli lane]
     AL[aider_local lane]
-    WS[WorkStation<br/>infrastructure]
+    WS[PlatformDeployment<br/>infrastructure]
     TM[tiny local models]
 
     OC -->|directs work| CP
@@ -186,10 +186,10 @@ is a SwitchBoard config edit, not a OperationsCenter code change.
 SwitchBoard and kodo to impose multi-step process on complex tasks. Simple tasks can
 skip Archon entirely and go straight to kodo.
 
-**Infrastructure ownership is centralised.** WorkStation is the single place where
+**Infrastructure ownership is centralised.** PlatformDeployment is the single place where
 services run or fail to run. No service repo needs to know how it is deployed.
 
-**Local cheap execution is first-class.** The `aider_local` lane with WorkStation-
+**Local cheap execution is first-class.** The `aider_local` lane with PlatformDeployment-
 deployed tiny models means OperationsCenter can generate useful work indefinitely without
 incurring API costs on every run.
 
@@ -263,7 +263,7 @@ SwitchBoard
 
 kodo (aider_local lane)
   checkout worktree
-  run aider with WorkStation tiny model
+  run aider with PlatformDeployment tiny model
   fix lint errors
   run validation
   write diff + outcome artifacts
@@ -291,7 +291,7 @@ SwitchBoard. It selects the execution lane. It does not proxy API calls to exter
 providers.
 
 **Q: Where do local models run?**
-WorkStation deploys and serves the tiny local models consumed by the `aider_local`
+PlatformDeployment deploys and serves the tiny local models consumed by the `aider_local`
 lane. OperationsCenter and SwitchBoard do not own model deployment.
 
 **Q: Can kodo use a lane other than Claude CLI?**

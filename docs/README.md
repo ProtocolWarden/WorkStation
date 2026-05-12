@@ -1,16 +1,20 @@
-# WorkStation Documentation
+# PlatformDeployment Documentation
 
-Index for the `docs/` tree. WorkStation hosts the **canonical platform
-architecture docs** that other repos reference. The `architecture/` directory
-is subgrouped by concern: `system/`, `routing/`, `adapters/`, `contracts/`,
-`execution/`, `policy/`. Day-to-day operations material lives under
-`operations/`, reference material under `reference/`, project-level docs under
-`system/`.
+Index for the `docs/` tree.
 
-## Architecture (canonical platform docs)
+`PlatformDeployment` is the current repository identity for the
+`PlatformDeployment` plane. It owns local deployment, hosting, and
+machine-specific topography concerns.
 
-These are the source of truth for cross-repo system design. Other repos link
-into this directory rather than duplicate.
+Public-facing ecosystem doctrine and charter material now live in
+`ProtocolWarden.github.io`. PlatformDeployment docs are operational and
+deployment-oriented, not the canonical public architecture charter.
+
+## Architecture (deployment-focused)
+
+These documents describe deployment, hosting, and local stack behavior.
+They may provide detailed implementation notes, but they are not the
+canonical public source of truth for ecosystem-wide ownership doctrine.
 
 ### System
 

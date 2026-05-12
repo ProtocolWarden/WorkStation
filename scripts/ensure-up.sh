@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — ensure-up.sh
+# PlatformDeployment — ensure-up.sh
 # Ensure the stack is running. If services are already healthy, do nothing.
 # If they are not, start the stack with docker compose up.
 #
@@ -27,7 +27,7 @@ _healthy() {
   curl --silent --fail --max-time "${CURL_TIMEOUT}" "http://localhost:$1/health" > /dev/null 2>&1
 }
 
-echo "=== WorkStation: ensure-up ==="
+echo "=== PlatformDeployment: ensure-up ==="
 echo ""
 
 if _healthy "${PORT_SWITCHBOARD}"; then

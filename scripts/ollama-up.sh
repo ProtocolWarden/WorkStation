@@ -9,7 +9,7 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 COMPOSE_FILE="$REPO_ROOT/compose/docker-compose.local-ai.yml"
 MODEL="${1:-qwen2.5-coder:3b}"
 
-echo "=== WorkStation: starting Ollama ==="
+echo "=== PlatformDeployment: starting Ollama ==="
 docker compose -f "$COMPOSE_FILE" up -d
 
 echo "  Waiting for Ollama to be ready..."
@@ -29,4 +29,4 @@ echo "  Pulling model: $MODEL"
 bash "$SCRIPT_DIR/ollama-pull-model.sh" "$MODEL"
 
 echo ""
-echo "  Lane is ready. Run: workstation lane status aider_local"
+echo "  Lane is ready. Run: python -m platform_deployment_cli lane status aider_local"

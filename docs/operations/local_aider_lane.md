@@ -12,7 +12,7 @@ OperationsCenter →  AiderLocalBackendAdapter.execute()
                               --api-base http://localhost:11434
                               --yes-always
                               --message-file /tmp/<run_id>.txt
-WorkStation      →  provisions Ollama + model
+PlatformDeployment      →  provisions Ollama + model
 ```
 
 ## Quick start
@@ -20,10 +20,10 @@ WorkStation      →  provisions Ollama + model
 1. **Copy the config template:**
 
    ```bash
-   cp config/workstation/local_lane.example.yaml config/workstation/local_lane.yaml
+   cp config/platformdeployment/local_lane.example.yaml config/platformdeployment/local_lane.yaml
    ```
 
-2. **Enable the lane** — edit `config/workstation/local_lane.yaml`:
+2. **Enable the lane** — edit `config/platformdeployment/local_lane.yaml`:
 
    ```yaml
    lane:
@@ -46,19 +46,19 @@ WorkStation      →  provisions Ollama + model
 4. **Verify the lane is ready:**
 
    ```bash
-   python -m workstation_cli lane doctor aider_local
-   python -m workstation_cli lane status aider_local
+   python -m platform_deployment_cli lane doctor aider_local
+   python -m platform_deployment_cli lane status aider_local
    ```
 
 ## CLI commands
 
 | Command | Description |
 |---------|-------------|
-| `workstation lane start aider_local` | Start managed model services |
-| `workstation lane stop aider_local` | Stop managed model services |
-| `workstation lane status aider_local` | Show state and model health |
-| `workstation lane health aider_local` | Live endpoint check |
-| `workstation lane doctor aider_local` | Full pre-flight diagnostic |
+| `python -m platform_deployment_cli lane start aider_local` | Start managed model services |
+| `python -m platform_deployment_cli lane stop aider_local` | Stop managed model services |
+| `python -m platform_deployment_cli lane status aider_local` | Show state and model health |
+| `python -m platform_deployment_cli lane health aider_local` | Live endpoint check |
+| `python -m platform_deployment_cli lane doctor aider_local` | Full pre-flight diagnostic |
 
 ## Model recommendations (8 GB RAM, CPU-only)
 

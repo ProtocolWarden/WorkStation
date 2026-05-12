@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — health.ps1
+# PlatformDeployment — health.ps1
 # Check the /health endpoint of each service and report pass/fail.
 # Exit code: 0 if all healthy, 1 if any service is unhealthy or unreachable.
 # =============================================================================
@@ -47,7 +47,7 @@ function Check-Health {
     }
 }
 
-Write-Host "=== WorkStation: health check ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: health check ===" -ForegroundColor Cyan
 Write-Host ""
 Check-Health "SwitchBoard" "http://localhost:$portSwitchboard/health"
 Write-Host ""

@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — Docker Compose Dev Overrides (example)
+# PlatformDeployment — Docker Compose Dev Overrides (example)
 # =============================================================================
 # Copy this file to docker-compose.override.yml to enable local dev features.
 # The override file is automatically merged by Docker Compose when present.

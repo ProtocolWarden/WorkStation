@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — logs.sh
+# PlatformDeployment — logs.sh
 # Tail Docker Compose logs for all services, or a specific one.
 #
 # Usage:
@@ -17,7 +17,7 @@ COMPOSE_FILE="${REPO_ROOT}/compose/docker-compose.yml"
 SERVICE="${1:-}"
 TAIL="${2:-50}"
 
-echo "=== WorkStation: streaming logs (Ctrl+C to stop) ==="
+echo "=== PlatformDeployment: streaming logs (Ctrl+C to stop) ==="
 if [[ -n "${SERVICE}" ]]; then
   echo "Service: ${SERVICE}"
 fi

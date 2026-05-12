@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — Core Profile
+# PlatformDeployment — Core Profile
 # =============================================================================
 # Minimal stack: SwitchBoard only.
 # No observability or dev-tool services.

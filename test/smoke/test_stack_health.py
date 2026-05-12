@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: SSPL-1.0
 # Copyright (C) 2026 ProtocolWarden
 """
-test_stack_health.py — Smoke tests for the running WorkStation stack.
+test_stack_health.py — Smoke tests for the running PlatformDeployment stack.
 
 These tests hit real /health endpoints. They are automatically skipped if
 the stack is not running, so they are safe to run in any environment.

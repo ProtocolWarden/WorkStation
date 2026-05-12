@@ -1,6 +1,6 @@
 # Health Model
 
-This document describes how WorkStation determines and reports the health of the stack.
+This document describes how PlatformDeployment determines and reports the health of the stack.
 
 ---
 
@@ -14,7 +14,7 @@ This document describes how WorkStation determines and reports the health of the
 
 ### Key rules
 
-- A service is **required** when `required: true` is set in `config/workstation/services.yaml`.
+- A service is **required** when `required: true` is set in `config/platformdeployment/services.yaml`.
 - A service is **optional** when `required: false` (or the field is absent).
 - If there are no services at all, the platform status is `unhealthy`.
 
@@ -39,17 +39,17 @@ Each service is probed by sending a `GET` request to its `/health` endpoint. A r
 - The TCP connection succeeds (no connection refused / timeout).
 - The HTTP response status code is `200`.
 
-Timeouts default to 3 s (connect) and 10 s (read). These can be overridden per-service in `config/workstation/endpoints.yaml`.
+Timeouts default to 3 s (connect) and 10 s (read). These can be overridden per-service in `config/platformdeployment/endpoints.yaml`.
 
 ---
 
 ## Example JSON Output
 
-The `workstation_cli status --json` command returns a JSON object with this shape:
+The `platform_deployment_cli status --json` command returns a JSON object with this shape:
 
 ```json
 {
-  "platform": "workstation",
+  "platform": "platformdeployment",
   "status": "healthy",
   "timestamp": "2026-04-20T12:00:00Z",
   "services": {
@@ -66,7 +66,7 @@ The `workstation_cli status --json` command returns a JSON object with this shap
 
 ```json
 {
-  "platform": "workstation",
+  "platform": "platformdeployment",
   "status": "degraded",
   "timestamp": "2026-04-20T12:00:00Z",
   "services": {
@@ -90,7 +90,7 @@ In this example `metrics` is an optional service, so the platform reports `degra
 
 ```json
 {
-  "platform": "workstation",
+  "platform": "platformdeployment",
   "status": "unhealthy",
   "timestamp": "2026-04-20T12:00:00Z",
   "services": {
@@ -110,16 +110,16 @@ In this example `metrics` is an optional service, so the platform reports `degra
 
 ```bash
 # Human-readable summary
-python -m workstation_cli status
+python -m platform_deployment_cli status
 
 # Machine-readable JSON
-python -m workstation_cli status --json
+python -m platform_deployment_cli status --json
 
 # Raw health check output
-python -m workstation_cli health
+python -m platform_deployment_cli health
 
 # Health as JSON
-python -m workstation_cli health --json
+python -m platform_deployment_cli health --json
 ```
 
 See also: `scripts/health.sh` and `scripts/status.sh` for shell-based equivalents.

@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — restart.ps1
+# PlatformDeployment — restart.ps1
 # Tear down the stack, then bring it back up.
 # =============================================================================
 #Requires -Version 5.1
@@ -13,7 +13,7 @@ $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-Write-Host "=== WorkStation: restarting stack ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: restarting stack ===" -ForegroundColor Cyan
 Write-Host ""
 
 # ── Down ──────────────────────────────────────────────────────────────────────

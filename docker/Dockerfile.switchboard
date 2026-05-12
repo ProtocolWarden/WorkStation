@@ -1,8 +1,8 @@
 # =============================================================================
 # SwitchBoard — build from source
-# Build context: SwitchBoard repo root (sibling of WorkStation)
+# Build context: SwitchBoard repo root (sibling of PlatformDeployment)
 #
-# Usage (from WorkStation/):
+# Usage (from PlatformDeployment/):
 #   docker build -f docker/Dockerfile.switchboard -t switchboard:latest ../SwitchBoard
 # =============================================================================
 

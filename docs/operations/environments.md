@@ -1,6 +1,6 @@
 # Environments
 
-This document describes how WorkStation is configured differently across development, staging, and production environments.
+This document describes how PlatformDeployment is configured differently across development, staging, and production environments.
 
 ---
 

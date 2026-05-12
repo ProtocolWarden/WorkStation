@@ -20,7 +20,7 @@ between SwitchBoard and external LLM providers. Its job was to:
 - Handle retries and failover across providers
 - Hold provider API keys so they were never exposed to clients
 
-WorkStation owned the 9router Dockerfile and compose service. SwitchBoard forwarded
+PlatformDeployment owned the 9router Dockerfile and compose service. SwitchBoard forwarded
 every chat completion request to 9router via an `HttpNineRouterGateway` adapter.
 
 ---
@@ -74,7 +74,7 @@ this complexity serves no purpose.
 | Provider credential management | CLI OAuth (each lane manages its own auth) |
 | Provider format translation | Claude Agent SDK / Codex SDK (each handles its own wire format) |
 | Retry and failover across providers | kodo's execution loop; lane-level retry logic |
-| Local model serving | WorkStation (deploys tiny models for `aider_local` lane) |
+| Local model serving | PlatformDeployment (deploys tiny models for `aider_local` lane) |
 | Provider selection | SwitchBoard lane selection (chooses which lane, not which API) |
 
 ---
@@ -85,9 +85,9 @@ this complexity serves no purpose.
    to external provider APIs. Any future version of SwitchBoard that starts proxying
    API calls to providers is drifting back toward the removed pattern.
 
-2. **WorkStation owns local model infra.** The tiny models that the `aider_local` lane
-   uses are deployed by WorkStation, not by a provider routing service. This makes the
-   local cheap lane a WorkStation concern, not an external dependency.
+2. **PlatformDeployment owns local model infra.** The tiny models that the `aider_local` lane
+   uses are deployed by PlatformDeployment, not by a provider routing service. This makes the
+   local cheap lane a PlatformDeployment concern, not an external dependency.
 
 3. **CLI auth is CLI-managed.** The premium lanes (`claude_cli`, `codex_cli`) handle
    their own authentication via their respective CLIs. The platform does not hold or
@@ -101,13 +101,13 @@ this complexity serves no purpose.
 
 ## Migration Impact
 
-- `WorkStation/docker/Dockerfile.9router` — no longer built or maintained
-- `WorkStation/compose/docker-compose.yml` — 9router service removed
+- `PlatformDeployment/docker/Dockerfile.9router` — no longer built or maintained
+- `PlatformDeployment/compose/docker-compose.yml` — 9router service removed
 - `SwitchBoard/src/switchboard/adapters/http_nine_router_gateway.py` — to be replaced
   in a future phase with a lane-dispatch adapter
 - `SwitchBoard/docs/` — references to 9router updated to reflect new lane model
-- `WorkStation/docs/architecture.md` — superseded by `system_overview.md`
-- `WorkStation/README.md` — updated to remove 9router from services table
+- `PlatformDeployment/docs/architecture.md` — superseded by `system_overview.md`
+- `PlatformDeployment/README.md` — updated to remove 9router from services table
 
 No existing OperationsCenter or kodo code depends on 9router directly. The change is
 primarily an infrastructure and SwitchBoard adapter concern.

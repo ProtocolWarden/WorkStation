@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — bootstrap.ps1
+# PlatformDeployment — bootstrap.ps1
 # First-time setup: copy example config files and pull Docker images.
 # Safe to run multiple times — existing files are never overwritten.
 # =============================================================================
@@ -17,7 +17,7 @@ $ScriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot    = Split-Path -Parent $ScriptDir
 $ComposeFile = Join-Path $RepoRoot 'compose\docker-compose.yml'
 
-Write-Host "=== WorkStation: bootstrap ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: bootstrap ===" -ForegroundColor Cyan
 Write-Host ""
 
 # ── Helper: copy example file if destination does not exist ───────────────────
@@ -44,8 +44,8 @@ Copy-IfMissing `
     (Join-Path $RepoRoot 'config\switchboard\policy.yaml')
 
 Copy-IfMissing `
-    (Join-Path $RepoRoot 'config\workstation\endpoints.example.yaml') `
-    (Join-Path $RepoRoot 'config\workstation\endpoints.yaml')
+    (Join-Path $RepoRoot 'config\platformdeployment\endpoints.example.yaml') `
+    (Join-Path $RepoRoot 'config\platformdeployment\endpoints.yaml')
 
 # ── Step 2: docker compose pull ───────────────────────────────────────────────
 Write-Host ""

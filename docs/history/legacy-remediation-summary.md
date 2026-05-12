@@ -10,7 +10,7 @@ This remediation pass aligned the running system with the Phase 1–14 architect
 
 - SwitchBoard provider-proxy wiring and `/v1/chat/completions` forwarding
 - provider-router-dependent health semantics
-- WorkStation base compose dependency on the retired provider router
+- PlatformDeployment base compose dependency on the retired provider router
 - OperatorConsole provider-dashboard and provider-polling flows
 - OperationsCenter legacy worker/reviewer execution entrypoints
 

@@ -3,7 +3,7 @@
 """
 lane_cli.py — CLI commands for the aider_local execution lane.
 
-Subcommand group: workstation_cli lane <action> [lane_name]
+Subcommand group: platform_deployment_cli lane <action> [lane_name]
 
   lane start    [lane_name]   Start local model services for the lane.
   lane stop     [lane_name]   Stop local model services for the lane.
@@ -24,7 +24,7 @@ from .lane_manager import LocalLaneManager
 from .lane_models import LaneState, LaneStatus
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
-_DEFAULT_LANE_CONFIG = _REPO_ROOT / "config" / "workstation" / "local_lane.yaml"
+_DEFAULT_LANE_CONFIG = _REPO_ROOT / "config" / "platformdeployment" / "local_lane.yaml"
 _AIDER_LOCAL = "aider_local"
 
 
@@ -165,7 +165,7 @@ def cmd_lane_doctor(args) -> int:
     checks: list[tuple[str, bool, str]] = []  # (label, passed, detail)
 
     # 1. Config file exists
-    path = config_path or _REPO_ROOT / "config" / "workstation" / "local_lane.yaml"
+    path = config_path or _DEFAULT_LANE_CONFIG
     config_exists = path is not None and Path(path).exists()
     checks.append(("config file", config_exists, str(path) if config_exists else f"not found at {path}"))
 

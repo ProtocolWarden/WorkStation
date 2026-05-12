@@ -1,5 +1,5 @@
-# Grafana datasource provisioning for the WorkStation observability
-# profile. Points the default datasource at the workstation-prometheus
+# Grafana datasource provisioning for the PlatformDeployment observability
+# profile. Points the default datasource at the platformdeployment-prometheus
 # container on the platform network.
 #
 # Mounted into the grafana container at
@@ -12,6 +12,6 @@ datasources:
   - name: Prometheus
     type: prometheus
     access: proxy
-    url: http://workstation-prometheus:9090
+    url: http://platformdeployment-prometheus:9090
     isDefault: true
     editable: false

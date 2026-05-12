@@ -11,7 +11,7 @@ not as the primary source of current architecture guidance.
 - `fixed` Policy is a mandatory pre-execution gate in the supported execution path.
 - `fixed` Supported tuning runtime is recommendation-only.
 - `fixed` SwitchBoard default runtime is selector-only.
-- `fixed` WorkStation base compose and startup flow no longer require the retired provider router.
+- `fixed` PlatformDeployment base compose and startup flow no longer require the retired provider router.
 - `fixed` OperatorConsole operator flows no longer center on the retired provider router.
 - `fixed` OperationsCenter default worker entrypoint is planning-only while the supported execute entrypoint remains the canonical execution boundary.
 - `fixed` OperationsCenter legacy execution runtime has been removed from the supported code path.

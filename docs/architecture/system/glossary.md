@@ -62,11 +62,11 @@ No per-call API keys are involved. Auth is handled by the CLI's own OAuth sessio
 
 **cheap lane**
 The `aider_local` lane. Runs against locally deployed tiny models provided by
-WorkStation. No external API calls. Zero marginal cost per run.
+PlatformDeployment. No external API calls. Zero marginal cost per run.
 
 **local tiny-model lane**
 Synonym for `aider_local`. Emphasises that the models are deployed on the local
-machine by WorkStation, not accessed via a remote API.
+machine by PlatformDeployment, not accessed via a remote API.
 
 ---
 

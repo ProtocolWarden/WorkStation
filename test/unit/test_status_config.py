@@ -23,15 +23,15 @@ import sys
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO_ROOT / "tools"))
 
-from workstation_cli.config import (  # noqa: E402
+from platform_deployment_cli.config import (  # noqa: E402
     ServiceConfig,
-    WorkstationConfig,
+    PlatformDeploymentConfig,
     load_config,
     load_endpoints,
     load_ports,
     load_services_meta,
 )
-from workstation_cli.status import aggregate_status  # noqa: E402
+from platform_deployment_cli.status import aggregate_status  # noqa: E402
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -43,8 +43,8 @@ def _write(path: Path, text: str) -> Path:
 
 @pytest.fixture()
 def config_dir(tmp_path: Path) -> Path:
-    """A temporary config/workstation directory with all three YAML files."""
-    d = tmp_path / "workstation"
+    """A temporary config/platformdeployment directory with all three YAML files."""
+    d = tmp_path / "platformdeployment"
     d.mkdir()
 
     _write(d / "endpoints.yaml", """\
@@ -82,7 +82,7 @@ def config_dir(tmp_path: Path) -> Path:
 @pytest.fixture()
 def endpoints_only_dir(tmp_path: Path) -> Path:
     """A directory with only endpoints.yaml (no services.yaml or ports.yaml)."""
-    d = tmp_path / "workstation"
+    d = tmp_path / "platformdeployment"
     d.mkdir()
     _write(d / "endpoints.yaml", """\
         services:
@@ -123,7 +123,7 @@ class TestLoadServicesMeta:
             load_services_meta(p)
 
     def test_example_file_parses(self):
-        example = _REPO_ROOT / "config" / "workstation" / "services.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "services.example.yaml"
         assert example.exists(), f"Missing: {example}"
         meta = load_services_meta(example)
         assert "switchboard" in meta
@@ -147,7 +147,7 @@ class TestLoadPorts:
             load_ports(tmp_path / "nope.yaml")
 
     def test_example_file_parses(self):
-        example = _REPO_ROOT / "config" / "workstation" / "ports.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "ports.example.yaml"
         assert example.exists(), f"Missing: {example}"
         ports = load_ports(example)
         assert ports.get("switchboard") == 20401
@@ -159,7 +159,7 @@ class TestLoadPorts:
 class TestLoadConfig:
     def test_returns_workstation_config(self, config_dir: Path):
         cfg = load_config(config_dir)
-        assert isinstance(cfg, WorkstationConfig)
+        assert isinstance(cfg, PlatformDeploymentConfig)
 
     def test_services_loaded(self, config_dir: Path):
         cfg = load_config(config_dir)
@@ -186,7 +186,7 @@ class TestLoadConfig:
         assert cfg.ports == {}
 
     def test_missing_endpoints_raises(self, tmp_path: Path):
-        d = tmp_path / "workstation"
+        d = tmp_path / "platformdeployment"
         d.mkdir()
         with pytest.raises(FileNotFoundError):
             load_config(d)
@@ -232,7 +232,7 @@ class TestAggregateStatus:
         services = _make_services({
             "switchboard": {"url": "http://localhost:20401", "required": True},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health({"switchboard"})):
             result = aggregate_status(services)
         assert result["status"] == "healthy"
@@ -241,7 +241,7 @@ class TestAggregateStatus:
         services = _make_services({
             "switchboard": {"url": "http://localhost:20401", "required": True},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health(set())):
             result = aggregate_status(services)
         assert result["status"] == "unhealthy"
@@ -251,7 +251,7 @@ class TestAggregateStatus:
             "switchboard": {"url": "http://localhost:20401", "required": True},
             "metrics":     {"url": "http://localhost:9090",  "required": False},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health({"switchboard"})):
             result = aggregate_status(services)
         assert result["status"] == "degraded"
@@ -260,13 +260,13 @@ class TestAggregateStatus:
         services = _make_services({
             "switchboard": {"url": "http://localhost:20401", "required": True},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health(set())):
             result = aggregate_status(services)
         assert result["status"] == "unhealthy"
 
     def test_empty_services_is_unhealthy(self):
-        with patch("workstation_cli.status.check_all_health", return_value={}):
+        with patch("platform_deployment_cli.status.check_all_health", return_value={}):
             result = aggregate_status({})
         assert result["status"] == "unhealthy"
 
@@ -274,11 +274,11 @@ class TestAggregateStatus:
         services = _make_services({
             "switchboard": {"url": "http://localhost:20401", "required": True},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health({"switchboard"})):
             result = aggregate_status(services)
 
-        assert result["platform"] == "workstation"
+        assert result["platform"] == "platformdeployment"
         assert "status" in result
         assert "timestamp" in result
         assert "services" in result
@@ -292,7 +292,7 @@ class TestAggregateStatus:
         services = _make_services({
             "switchboard": {"url": "http://localhost:20401", "required": True},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health({"switchboard"})):
             result = aggregate_status(services)
 
@@ -302,7 +302,7 @@ class TestAggregateStatus:
         services = _make_services({
             "switchboard": {"url": "http://localhost:20401"},
         })
-        with patch("workstation_cli.status.check_all_health",
+        with patch("platform_deployment_cli.status.check_all_health",
                    side_effect=_mock_health({"switchboard"})):
             result = aggregate_status(services)
         ts = result["timestamp"]

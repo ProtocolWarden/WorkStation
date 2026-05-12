@@ -24,7 +24,7 @@ You will receive an acknowledgment within 72 hours. We aim to release a fix with
 
 ## Scope
 
-WorkStation manages the startup and runtime environment for the platform. The primary security surface is:
+PlatformDeployment manages the startup and runtime environment for the platform. The primary security surface is:
 
 - **Docker socket exposure** — compose files that grant containers unintended host access
 - **Secrets in environment files** — API tokens or credentials committed or leaked via `.env`

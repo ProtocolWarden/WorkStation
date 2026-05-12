@@ -1,19 +1,18 @@
 # SPDX-License-Identifier: SSPL-1.0
 # Copyright (C) 2026 ProtocolWarden
 """
-config.py — Unified configuration loader for workstation_cli.
+config.py — Unified configuration loader for platform_deployment_cli.
 
 Loads endpoint and service configuration from YAML files under
-config/workstation/:
+config/platformdeployment/:
 
   endpoints.yaml   — service URLs, health paths, timeouts
   services.yaml    — required/optional flags per service
   ports.yaml       — canonical port assignments
 
-All three files follow a copy-to-activate pattern: operators copy the
-.example.* variants and customise them. This module reads the live files
-and merges the information into ServiceConfig objects that the rest of
-workstation_cli consumes.
+All three files follow a copy-to-activate pattern. This module reads the
+live files and merges them into ServiceConfig objects that the rest of
+the CLI consumes.
 """
 
 from __future__ import annotations
@@ -34,7 +33,7 @@ except ImportError:  # pragma: no cover
 
 @dataclass
 class ServiceConfig:
-    """Full configuration for a single WorkStation service."""
+    """Full configuration for a single PlatformDeployment service."""
 
     name: str
     url: str
@@ -56,8 +55,8 @@ class ServiceConfig:
 
 
 @dataclass
-class WorkstationConfig:
-    """Aggregated configuration for the full WorkStation stack."""
+class PlatformDeploymentConfig:
+    """Aggregated configuration for the full PlatformDeployment stack."""
 
     services: Dict[str, ServiceConfig] = field(default_factory=dict)
     ports: Dict[str, int] = field(default_factory=dict)
@@ -98,7 +97,7 @@ def load_endpoints(path: Path) -> Dict[str, ServiceConfig]:
     """
     Parse an endpoints.yaml file.
 
-    Expected structure (see config/workstation/endpoints.example.yaml):
+    Expected structure (see config/platformdeployment/endpoints.example.yaml):
 
         version: "1"
         services:
@@ -145,7 +144,7 @@ def load_services_meta(path: Path) -> Dict[str, dict]:
     """
     Parse a services.yaml file that declares required/optional flags.
 
-    Expected structure (see config/workstation/services.example.yaml):
+    Expected structure (see config/platformdeployment/services.example.yaml):
 
         services:
           - name: switchboard
@@ -175,7 +174,7 @@ def load_ports(path: Path) -> Dict[str, int]:
     """
     Parse a ports.yaml file.
 
-    Expected structure (see config/workstation/ports.example.yaml):
+    Expected structure (see config/platformdeployment/ports.example.yaml):
 
         ports:
           switchboard: 20401
@@ -192,21 +191,21 @@ def load_ports(path: Path) -> Dict[str, int]:
     return {name: int(port) for name, port in raw.items()}
 
 
-def load_config(config_dir: Path) -> WorkstationConfig:
+def load_config(config_dir: Path) -> PlatformDeploymentConfig:
     """
-    Load all workstation configuration from *config_dir*.
+    Load all PlatformDeployment configuration from *config_dir*.
 
     Reads endpoints.yaml, services.yaml (optional), and ports.yaml (optional),
-    and merges them into a WorkstationConfig.
+    and merges them into a PlatformDeploymentConfig.
 
     Only endpoints.yaml is required; if services.yaml or ports.yaml are absent
     the function uses defaults (all services required, ports from endpoint URLs).
 
     Args:
-        config_dir: Path to the config/workstation/ directory.
+        config_dir: Path to the config/platformdeployment/ directory.
 
     Returns:
-        WorkstationConfig with merged service and port data.
+        PlatformDeploymentConfig with merged service and port data.
     """
     endpoints_file = config_dir / "endpoints.yaml"
     services_file = config_dir / "services.yaml"
@@ -227,4 +226,4 @@ def load_config(config_dir: Path) -> WorkstationConfig:
     if ports_file.exists():
         ports = load_ports(ports_file)
 
-    return WorkstationConfig(services=services, ports=ports)
+    return PlatformDeploymentConfig(services=services, ports=ports)

@@ -1,14 +1,14 @@
 # =============================================================================
-# WorkStation — Docker Compose (production / base)
+# PlatformDeployment — Docker Compose (production / base)
 # =============================================================================
 # Usage (from repo root):
 #   docker compose -f compose/docker-compose.yml up -d
 #
 # The service is built from source. The build context assumes SwitchBoard is
-# checked out as a sibling of WorkStation:
+# checked out as a sibling of PlatformDeployment:
 #
 #   GitHub/
-#     WorkStation/   ← this repo
+#     PlatformDeployment/   ← this repo
 #     SwitchBoard/   ← git clone https://github.com/ProtocolWarden/SwitchBoard
 #
 # For local overrides copy docker-compose.override.example.yml to
@@ -35,9 +35,9 @@ services:
   switchboard:
     build:
       context: ../../SwitchBoard
-      dockerfile: ../WorkStation/docker/Dockerfile.switchboard
+      dockerfile: ../PlatformDeployment/docker/Dockerfile.switchboard
     image: switchboard:latest
-    container_name: workstation-switchboard
+    container_name: platformdeployment-switchboard
     <<: [*default-restart, *default-logging]
     ports:
       - "${PORT_SWITCHBOARD:-20401}:20401"
@@ -58,7 +58,7 @@ services:
 # ─────────────────────────────────────────────────────────────────────────────
 networks:
   platform:
-    name: workstation-platform
+    name: platformdeployment-platform
     driver: bridge
 
 # ─────────────────────────────────────────────────────────────────────────────

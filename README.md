@@ -1,10 +1,10 @@
-# WorkStation
+# PlatformDeployment
 
-WorkStation is the local developer platform that deploys and operates the shared AI
+PlatformDeployment is the local developer platform that deploys and operates the shared AI
 coding stack. It owns the lifecycle of **SwitchBoard**, the **Plane** task board, and
 the **tiny local models** consumed by the `aider_local` coding lane.
 
-**Ownership boundary:** WorkStation owns everything that makes services *run*. If you
+**Ownership boundary:** PlatformDeployment owns everything that makes services *run*. If you
 are asking "where does this service run?", the answer lives here. If you are asking
 "what does this service do?", the answer lives in the service repo. See
 [`docs/architecture/system/ownership.md`](docs/architecture/system/ownership.md) for the full model.
@@ -19,14 +19,15 @@ are asking "where does this service run?", the answer lives here. If you are ask
 - Service Dockerfiles and compose manifests for SwitchBoard, Plane, archon, and aider_local tiny models
 - Lifecycle scripts (`up.sh`, `down.sh`) and worker shims (`workers.sh`)
 - Port assignments, environment injection, health checks
-- Local CLI helpers under `tools/workstation_cli/` for lane config and stack health
-- Architecture docs (`docs/architecture/`) — the canonical home for cross-repo system design
+- Local CLI helpers under `tools/platform_deployment_cli/` for lane config
+  and stack health
+- Deployment and operator docs under `docs/`
 
 ## What this repo is not
 
-- A request-path participant — WorkStation is invoked by operators and bootstrap scripts only
+- A request-path participant — PlatformDeployment is invoked by operators and bootstrap scripts only
 - OperationsCenter / SwitchBoard / OperatorConsole — service code lives in those repos
-- A package — installs nothing on `pip install workstation`; it is a deployment harness
+- A package — installs nothing on `pip install platformdeployment`; it is a deployment harness
 - A scheduler or queue system
 
 ---
@@ -37,26 +38,26 @@ are asking "where does this service run?", the answer lives here. If you are ask
 |------------------|------|---------|
 | SwitchBoard      | 20401 | Execution-lane selector — classifies tasks, applies routing policy, selects lane |
 | Plane            | 8080  | Task board — work state, comments, labels (separate script-managed stack) |
-| tiny local models | local | Serves models for the `aider_local` coding lane (WorkStation-deployed) |
+| tiny local models | local | Serves models for the `aider_local` coding lane (PlatformDeployment-deployed) |
 
 SwitchBoard is required for coding lane dispatch. Plane is required for OperationsCenter
 operation. Tiny model deployment is required for the `aider_local` lane.
 
-## What WorkStation Is Not
+## What PlatformDeployment Is Not
 
-- **Not the task-prioritization engine.** WorkStation does not decide what work
+- **Not the task-prioritization engine.** PlatformDeployment does not decide what work
   matters next. That is OperationsCenter's job.
 
-- **Not the lane selector.** WorkStation deploys SwitchBoard; it does not make lane
+- **Not the lane selector.** PlatformDeployment deploys SwitchBoard; it does not make lane
   selection decisions. SwitchBoard owns the policy and the selection logic.
 
-- **Not the coding execution layer.** WorkStation does not run agents, edit files, or
+- **Not the coding execution layer.** PlatformDeployment does not run agents, edit files, or
   invoke CLIs. OperationsCenter's execution boundary and its backend processes do that.
 
-- **Not the workflow harness.** WorkStation does not define or execute multi-step
+- **Not the workflow harness.** PlatformDeployment does not define or execute multi-step
   coding workflows. That is Archon's job.
 
-- **Not a provider proxy.** WorkStation does not forward LLM API requests to external
+- **Not a provider proxy.** PlatformDeployment does not forward LLM API requests to external
   providers.
 
 ---
@@ -69,9 +70,9 @@ cp .env.example .env
 
 # 2. Copy service configs
 cp config/switchboard/policy.example.yaml      config/switchboard/policy.yaml
-cp config/workstation/endpoints.example.yaml   config/workstation/endpoints.yaml
-cp config/workstation/services.example.yaml    config/workstation/services.yaml
-cp config/workstation/ports.example.yaml       config/workstation/ports.yaml
+cp config/platformdeployment/endpoints.example.yaml   config/platformdeployment/endpoints.yaml
+cp config/platformdeployment/services.example.yaml    config/platformdeployment/services.yaml
+cp config/platformdeployment/ports.example.yaml       config/platformdeployment/ports.yaml
 
 # 3. Start the stack
 ./scripts/up.sh
@@ -93,7 +94,7 @@ On Windows (PowerShell):
 ## Architecture
 
 ```
-WorkStation deploys and manages:
+PlatformDeployment deploys and manages:
 
   SwitchBoard (:20401)    — execution-lane selector
   Plane (:8080)           — task board (OperationsCenter dependency)
@@ -104,7 +105,7 @@ System flow (see docs/architecture/system/system_overview.md for the full pictur
   OperationsCenter planning → SwitchBoard routing → OperationsCenter execution boundary
                                                      ├── claude_cli   (Claude CLI, OAuth)
                                                      ├── codex_cli    (Codex CLI, subscription)
-                                                     └── aider_local  (Aider + WorkStation models)
+                                                     └── aider_local  (Aider + PlatformDeployment models)
 ```
 
 See [`docs/architecture/system/system_overview.md`](docs/architecture/system/system_overview.md) for
@@ -114,22 +115,22 @@ the full layered view, component roles, and conceptual flow.
 
 ## Local Lane: aider_local
 
-WorkStation hosts the `aider_local` execution lane — local Aider execution backed
+PlatformDeployment hosts the `aider_local` execution lane — local Aider execution backed
 by tiny local models. This lane runs at zero marginal API cost and is suitable for
 lint fixes, simple edits, and documentation tasks.
 
 ```bash
 # Configure (copy example, set enabled: true, configure model endpoints)
-cp config/workstation/local_lane.example.yaml config/workstation/local_lane.yaml
+cp config/platformdeployment/local_lane.example.yaml config/platformdeployment/local_lane.yaml
 
 # Check lane status
-python -m workstation_cli lane status aider_local
+python -m platform_deployment_cli lane status aider_local
 
 # Start managed model services (if start_command is configured)
-python -m workstation_cli lane start aider_local
+python -m platform_deployment_cli lane start aider_local
 
 # Stop managed services
-python -m workstation_cli lane stop aider_local
+python -m platform_deployment_cli lane stop aider_local
 ```
 
 Lane states: `disabled` → `configured` → `starting` → `ready` | `unhealthy` | `failed`
@@ -143,8 +144,8 @@ For the architectural rationale, see
 
 ## Cross-Repo Architecture Docs
 
-WorkStation carries the canonical architecture docs for the multi-repo platform.
-Recent additions include:
+Public charter material now lives in `ProtocolWarden.github.io`. This repo
+keeps deployment-focused architecture and operator material, including:
 
 - [docs/architecture/routing/routing-tuning.md](docs/architecture/routing/routing-tuning.md)
 - [docs/architecture/routing/routing-tuning-examples.md](docs/architecture/routing/routing-tuning-examples.md)
@@ -166,13 +167,13 @@ upstream patch proposals clearly separated from active runtime behavior.
 ./scripts/status.sh
 
 # Python CLI — human-readable
-python -m workstation_cli status
+python -m platform_deployment_cli status
 
 # Python CLI — machine-readable JSON
-python -m workstation_cli status --json
+python -m platform_deployment_cli status --json
 
 # Raw health JSON
-python -m workstation_cli health --json
+python -m platform_deployment_cli health --json
 ```
 
 ### Health model
@@ -228,7 +229,7 @@ All client traffic targets SwitchBoard (`:20401`).
 ## Repository Layout
 
 ```
-WorkStation/
+PlatformDeployment/
 ├── compose/                  Docker Compose files and profiles
 │   ├── docker-compose.yml
 │   ├── docker-compose.override.example.yml
@@ -238,10 +239,10 @@ WorkStation/
 │       └── observability.yml
 ├── config/
 │   ├── switchboard/          policy, profiles, capabilities config
-│   └── workstation/          endpoint registry, service list, port map
+│   └── platformdeployment/   endpoint registry, service list, port map
 ├── scripts/                  Bash + PowerShell helper scripts
 ├── docs/                     Architecture, operations, health model, roadmap
-├── tools/workstation_cli/    Python CLI (up/down/health/status)
+├── tools/platform_deployment_cli/    Canonical Python CLI
 └── test/
     ├── smoke/                Live stack smoke tests (skipped if stack down)
     └── unit/                 Unit tests for config, health, status logic
@@ -257,11 +258,11 @@ Service configs live under `config/`. Copy each `.example.*` to its live name be
 
 ```bash
 cp config/switchboard/policy.example.yaml      config/switchboard/policy.yaml
-cp config/workstation/endpoints.example.yaml   config/workstation/endpoints.yaml
-cp config/workstation/services.example.yaml    config/workstation/services.yaml
-cp config/workstation/ports.example.yaml       config/workstation/ports.yaml
+cp config/platformdeployment/endpoints.example.yaml   config/platformdeployment/endpoints.yaml
+cp config/platformdeployment/services.example.yaml    config/platformdeployment/services.yaml
+cp config/platformdeployment/ports.example.yaml       config/platformdeployment/ports.yaml
 # Optional: local lane configuration
-cp config/workstation/local_lane.example.yaml  config/workstation/local_lane.yaml
+cp config/platformdeployment/local_lane.example.yaml  config/platformdeployment/local_lane.yaml
 ```
 
 Live config files are excluded from version control (see `.gitignore`). Only `.example.*` variants are committed.
@@ -275,19 +276,19 @@ Live config files are excluded from version control (see `.gitignore`). Only `.e
 pip install pyyaml httpx
 
 # Commands
-python -m workstation_cli up
-python -m workstation_cli down
-python -m workstation_cli health
-python -m workstation_cli health --json
-python -m workstation_cli status
-python -m workstation_cli status --json
+python -m platform_deployment_cli up
+python -m platform_deployment_cli down
+python -m platform_deployment_cli health
+python -m platform_deployment_cli health --json
+python -m platform_deployment_cli status
+python -m platform_deployment_cli status --json
 
 # Local lane commands
-python -m workstation_cli lane status aider_local
-python -m workstation_cli lane health aider_local
-python -m workstation_cli lane start aider_local
-python -m workstation_cli lane stop aider_local
-python -m workstation_cli lane status --json aider_local
+python -m platform_deployment_cli lane status aider_local
+python -m platform_deployment_cli lane health aider_local
+python -m platform_deployment_cli lane start aider_local
+python -m platform_deployment_cli lane stop aider_local
+python -m platform_deployment_cli lane status --json aider_local
 ```
 
 ---
@@ -328,4 +329,3 @@ pytest test/smoke/ -v
 ## License
 
 Server Side Public License, Version 1 (SSPL-1.0) — see [LICENSE](LICENSE).
-

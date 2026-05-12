@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — restart.sh
+# PlatformDeployment — restart.sh
 # Stop the stack then bring it back up.
 # =============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "=== WorkStation: restarting stack ==="
+echo "=== PlatformDeployment: restarting stack ==="
 echo ""
 
 echo "Step 1/2  Stopping..."

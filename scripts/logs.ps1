@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — logs.ps1
+# PlatformDeployment — logs.ps1
 # Stream Docker Compose logs for all (or a specific) service.
 # =============================================================================
 #Requires -Version 5.1
@@ -19,7 +19,7 @@ $ScriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot    = Split-Path -Parent $ScriptDir
 $ComposeFile = Join-Path $RepoRoot 'compose\docker-compose.yml'
 
-Write-Host "=== WorkStation: streaming logs (Ctrl+C to stop) ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: streaming logs (Ctrl+C to stop) ===" -ForegroundColor Cyan
 if ($Service) {
     Write-Host "Service: $Service" -ForegroundColor DarkGray
 }

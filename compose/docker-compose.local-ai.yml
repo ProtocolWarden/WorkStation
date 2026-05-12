@@ -1,4 +1,4 @@
-# WorkStation — local AI inference stack
+# PlatformDeployment — local AI inference stack
 # Runs Ollama in a Docker container for CPU-only inference.
 #
 # Usage:
@@ -6,7 +6,7 @@
 #   docker compose -f compose/docker-compose.local-ai.yml down
 #
 # Pull the model after starting:
-#   docker exec workstation-ollama ollama pull qwen2.5-coder:3b
+#   docker exec platformdeployment-ollama ollama pull qwen2.5-coder:3b
 #
 # Or use the helper scripts:
 #   bash scripts/ollama-up.sh
@@ -17,7 +17,7 @@ version: "3.9"
 services:
   ollama:
     image: ollama/ollama:latest
-    container_name: workstation-ollama
+    container_name: platformdeployment-ollama
     restart: unless-stopped
     ports:
       - "11434:11434"

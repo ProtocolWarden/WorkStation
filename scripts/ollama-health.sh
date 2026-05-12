@@ -7,7 +7,7 @@ set -euo pipefail
 
 BASE_URL="${1:-http://localhost:11434}"
 
-echo "=== WorkStation: Ollama health check ==="
+echo "=== PlatformDeployment: Ollama health check ==="
 echo "  Endpoint: $BASE_URL"
 
 if curl -sf "$BASE_URL/api/tags" >/dev/null 2>&1; then

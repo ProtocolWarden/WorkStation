@@ -7,7 +7,7 @@ are deciding where a new file belongs, read this first.
 
 ## The rule
 
-> If it makes a service **run**, `WorkStation` owns it.
+> If it makes a service **run**, `PlatformDeployment` owns it.
 > If it defines what a service **does**, the service repo owns it.
 
 No exceptions without documentation (see [Exceptions](#exceptions)).
@@ -24,16 +24,16 @@ Related rule:
 
 | Artifact | Owner | Examples |
 |----------|-------|---------|
-| Dockerfiles (stack deployment) | `WorkStation` | `docker/Dockerfile.switchboard` |
-| Docker Compose manifests | `WorkStation` | `compose/docker-compose.yml` |
-| Stack lifecycle scripts | `WorkStation` | `scripts/up.sh`, `scripts/down.sh`, `scripts/health.sh` |
-| Service ports, networks, volumes | `WorkStation` | compose service definitions |
-| Health checks (stack level) | `WorkStation` | compose `healthcheck:` blocks |
-| Startup order, dependency wiring | `WorkStation` | compose `depends_on:` |
-| Reverse-proxy / ingress config | `WorkStation` | (when added) |
-| Stack environment injection | `WorkStation` | `config/switchboard/*.yaml` |
-| Platform dependency infra (Plane) | `WorkStation` | Plane compose service |
-| Tiny local model deployment | `WorkStation` | model serving scripts for `aider_local` lane |
+| Dockerfiles (stack deployment) | `PlatformDeployment` | `docker/Dockerfile.switchboard` |
+| Docker Compose manifests | `PlatformDeployment` | `compose/docker-compose.yml` |
+| Stack lifecycle scripts | `PlatformDeployment` | `scripts/up.sh`, `scripts/down.sh`, `scripts/health.sh` |
+| Service ports, networks, volumes | `PlatformDeployment` | compose service definitions |
+| Health checks (stack level) | `PlatformDeployment` | compose `healthcheck:` blocks |
+| Startup order, dependency wiring | `PlatformDeployment` | compose `depends_on:` |
+| Reverse-proxy / ingress config | `PlatformDeployment` | (when added) |
+| Stack environment injection | `PlatformDeployment` | `config/switchboard/*.yaml` |
+| Platform dependency infra (Plane) | `PlatformDeployment` | Plane compose service |
+| Tiny local model deployment | `PlatformDeployment` | model serving scripts for `aider_local` lane |
 | Operator entrypoints / demo commands | `OperatorConsole` | `console demo`, `console open` |
 | Lane-routing policy and selector logic | `SwitchBoard` | `config/policy.yaml`, `LaneSelector`, `DecisionPlanner` |
 | Autonomy loop and Plane/SwitchBoard usage | `OperationsCenter` | `loop.py`, `SwitchBoardClient`, `PlaneClient` |
@@ -45,9 +45,9 @@ Related rule:
 
 ## Per-repo boundaries
 
-### WorkStation
+### PlatformDeployment
 
-WorkStation is the composition root for the shared local/dev/demo stack.
+PlatformDeployment is the composition root for the shared local/dev/demo stack.
 
 **Owns:**
 - Dockerfiles for every service in the shared stack (SwitchBoard, Plane, and any future service)
@@ -77,7 +77,7 @@ SwitchBoard owns everything about how routing decisions are made.
 - All test doubles for canonical routing behavior
 
 **Does not own:**
-- The Dockerfile used to run SwitchBoard in the shared stack (that is `WorkStation`'s)
+- The Dockerfile used to run SwitchBoard in the shared stack (that is `PlatformDeployment`'s)
 - Compose service definitions or port assignments
 - Health checks in the stack (though the service provides a `/health` endpoint)
 
@@ -95,8 +95,8 @@ OperationsCenter owns how autonomous agents reason, act, and use platform servic
 - Test doubles for Plane, SwitchBoard, and executor interactions
 
 **Does not own:**
-- The Plane stack required to run Plane (that is `WorkStation`'s)
-- The SwitchBoard stack (that is `WorkStation`'s)
+- The Plane stack required to run Plane (that is `PlatformDeployment`'s)
+- The SwitchBoard stack (that is `PlatformDeployment`'s)
 - How OperatorConsole launches the operator workspace
 
 ### OperatorConsole
@@ -107,11 +107,11 @@ OperatorConsole owns the operator experience — how humans interact with the pl
 - Session and workspace management (Zellij, Claude resume)
 - Operator command entrypoints: `console open`, `console demo`, `console status`, etc.
 - Layout definitions and context file templates
-- Human-facing orchestration that calls into WorkStation or service CLIs
+- Human-facing orchestration that calls into PlatformDeployment or service CLIs
 - Demo command that proves the platform is working (`console demo`)
 
 **Does not own:**
-- Platform stack lifecycle internals (delegates to WorkStation)
+- Platform stack lifecycle internals (delegates to PlatformDeployment)
 - Service business logic
 - Infrastructure configuration
 
@@ -119,7 +119,7 @@ OperatorConsole owns the operator experience — how humans interact with the pl
 
 Plane is a platform dependency — a task-tracking and project-management service.
 
-**Ownership:** `WorkStation` owns the Plane compose service and infrastructure.
+**Ownership:** `PlatformDeployment` owns the Plane compose service and infrastructure.
 OperationsCenter owns the Plane client adapter and all usage semantics.
 
 ### CxRP and RxP
@@ -197,9 +197,9 @@ Cross-repo audit and maintenance toolkit.
 
 A Dockerfile that builds and runs SwitchBoard as a container.
 
-**Belongs in:** `WorkStation/docker/Dockerfile.switchboard`
+**Belongs in:** `PlatformDeployment/docker/Dockerfile.switchboard`
 
-**Why:** Making a service run is infrastructure. WorkStation is the composition root.
+**Why:** Making a service run is infrastructure. PlatformDeployment is the composition root.
 
 ---
 
@@ -217,10 +217,10 @@ A Dockerfile that builds and runs SwitchBoard as a container.
 
 A compose service definition for Plane (required by OperationsCenter).
 
-**Belongs in:** `WorkStation/compose/docker-compose.yml`
+**Belongs in:** `PlatformDeployment/compose/docker-compose.yml`
 
 **Why:** Plane is a platform dependency. That OperationsCenter needs it does not change where
-the runnable infra lives. The service repo describes what it needs; WorkStation provides it.
+the runnable infra lives. The service repo describes what it needs; PlatformDeployment provides it.
 
 ---
 
@@ -242,7 +242,7 @@ An operator command that proves the full platform is working.
 **Belongs in:** `OperatorConsole`
 
 **Why:** This is an operator-facing entrypoint. OperatorConsole owns the operator experience.
-The demo delegates lifecycle actions to WorkStation and service calls to SwitchBoard/OperationsCenter.
+The demo delegates lifecycle actions to PlatformDeployment and service calls to SwitchBoard/OperationsCenter.
 
 ---
 
@@ -252,14 +252,14 @@ Documents required environment variables for SwitchBoard.
 
 **Belongs in:** `SwitchBoard/.env.example`
 
-**Why:** The service defines its own contract. WorkStation reads this contract
+**Why:** The service defines its own contract. PlatformDeployment reads this contract
 and injects appropriate values at runtime, but does not own the schema.
 
 ---
 
 ## Exceptions
 
-An exception is any case where a service repo other than `WorkStation` owns a
+An exception is any case where a service repo other than `PlatformDeployment` owns a
 runtime/deployment artifact.
 
 **Current exceptions:** none.
@@ -279,10 +279,10 @@ as a signal that the decision has not been thought through.
 
 Current state as of the time this document was written (2026-04-21):
 
-- [x] `WorkStation/docker/Dockerfile.switchboard` — created
-- [x] Plane infrastructure — `WorkStation/scripts/plane.sh` is canonical; `OperationsCenter/deployment/plane/manage.sh` delegates to it
+- [x] `PlatformDeployment/docker/Dockerfile.switchboard` — created
+- [x] Plane infrastructure — `PlatformDeployment/scripts/plane.sh` is canonical; `OperationsCenter/deployment/plane/manage.sh` delegates to it
 - [x] `console demo` command — implemented in `OperatorConsole/src/operator_console/demo.py`
-- [ ] WorkStation `workstation_cli` not yet wired to `console demo`
+- [ ] PlatformDeployment `platform_deployment_cli` not yet wired to `console demo`
 
 ---
 
@@ -290,11 +290,11 @@ Current state as of the time this document was written (2026-04-21):
 
 | Question | Answer |
 |----------|--------|
-| Where does a new service Dockerfile go? | `WorkStation/docker/` |
-| Where do compose service definitions go? | `WorkStation/compose/docker-compose.yml` |
-| Where does a health check script go? | `WorkStation/scripts/health.sh` |
+| Where does a new service Dockerfile go? | `PlatformDeployment/docker/` |
+| Where do compose service definitions go? | `PlatformDeployment/compose/docker-compose.yml` |
+| Where does a health check script go? | `PlatformDeployment/scripts/health.sh` |
 | Where does service-local config schema go? | the service repo (e.g. `SwitchBoard/config/`) |
 | Where does a demo/orchestration command go? | `OperatorConsole` |
-| Where does Plane startup logic go? | `WorkStation` |
+| Where does Plane startup logic go? | `PlatformDeployment` |
 | Where does OperationsCenter's Plane client go? | `OperationsCenter` |
 | Where does SwitchBoard's routing policy go? | `SwitchBoard` |

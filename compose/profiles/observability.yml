@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — Observability Profile
+# PlatformDeployment — Observability Profile
 # =============================================================================
 # Adds Prometheus + Grafana stubs for metrics collection and dashboarding.
 #
@@ -19,7 +19,7 @@ services:
   # ── Prometheus ────────────────────────────────────────────────────────────
   prometheus:
     image: prom/prometheus:latest
-    container_name: workstation-prometheus
+    container_name: platformdeployment-prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -37,7 +37,7 @@ services:
   # ── Grafana ───────────────────────────────────────────────────────────────
   grafana:
     image: grafana/grafana:latest
-    container_name: workstation-grafana
+    container_name: platformdeployment-grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -54,6 +54,6 @@ services:
 
 volumes:
   prometheus_data:
-    name: workstation-prometheus-data
+    name: platformdeployment-prometheus-data
   grafana_data:
-    name: workstation-grafana-data
+    name: platformdeployment-grafana-data

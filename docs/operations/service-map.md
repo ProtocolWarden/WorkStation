@@ -1,6 +1,6 @@
 # Service Map
 
-This document lists every service in the WorkStation stack, their roles, ports,
+This document lists every service in the PlatformDeployment stack, their roles, ports,
 container names, and health endpoints.
 
 ---
@@ -9,9 +9,9 @@ container names, and health endpoints.
 
 | Service | Container Name | Image | Host Port | Container Port | Health Endpoint | Role |
 |---------|----------------|-------|-----------|----------------|-----------------|------|
-| SwitchBoard | `workstation-switchboard` | `switchboard:latest` | 20401 | 20401 | `http://localhost:20401/health` | Execution-lane selector — classifies tasks, evaluates policy, selects lane |
+| SwitchBoard | `platformdeployment-switchboard` | `switchboard:latest` | 20401 | 20401 | `http://localhost:20401/health` | Execution-lane selector — classifies tasks, evaluates policy, selects lane |
 | Plane | `plane-app-*` | `makeplane/plane-*` | 8080 | 80 | `http://localhost:8080` | Task board, work-state source of truth (OperationsCenter dependency) |
-| tiny local models | (host process) | — | varies | — | — | Serves models for the `aider_local` coding lane (WorkStation-deployed) |
+| tiny local models | (host process) | — | varies | — | — | Serves models for the `aider_local` coding lane (PlatformDeployment-deployed) |
 | Status API | (future) | — | 20400 | 20400 | `http://localhost:20400/health` | Stack-level health aggregation |
 
 ---
@@ -24,20 +24,20 @@ These services are only started when specific compose profiles are used.
 
 | Service | Container Name | Host Port(s) | Purpose |
 |---------|----------------|--------------|---------|
-| Mailpit | `workstation-mailpit` | 1025 (SMTP), 8025 (UI) | Local email capture |
+| Mailpit | `platformdeployment-mailpit` | 1025 (SMTP), 8025 (UI) | Local email capture |
 
 ### Observability Profile (`compose/profiles/observability.yml`)
 
 | Service | Container Name | Host Port | Purpose |
 |---------|----------------|-----------|---------|
-| Prometheus | `workstation-prometheus` | 9090 | Metrics scraping and storage |
-| Grafana | `workstation-grafana` | 3000 | Metrics dashboards |
+| Prometheus | `platformdeployment-prometheus` | 9090 | Metrics scraping and storage |
+| Grafana | `platformdeployment-grafana` | 3000 | Metrics dashboards |
 
 ---
 
 ## Internal Network
 
-Services in the core stack share the `workstation-platform` Docker bridge network.
+Services in the core stack share the `platformdeployment-platform` Docker bridge network.
 Internal DNS resolution uses Docker service names:
 
 | Service | Internal DNS Name | Internal Address |
@@ -56,9 +56,9 @@ SwitchBoard   (starts independently, no required upstream service)
 
 ## Plane
 
-Plane is a platform dependency managed by WorkStation but **not** included in the
+Plane is a platform dependency managed by PlatformDeployment but **not** included in the
 core Docker Compose manifest. It is managed separately because it uses Makeplane's
-official release distribution (not a WorkStation-built image).
+official release distribution (not a PlatformDeployment-built image).
 
 **Lifecycle script:** `bash scripts/plane.sh {up|down|status}`
 
@@ -67,7 +67,7 @@ official release distribution (not a WorkStation-built image).
 **Config overrides:** copy `config/plane/.env.example` to `config/plane/.env`
 
 Plane runs on a separate Docker Compose stack (downloaded by `scripts/plane.sh`) and
-does not share the `workstation-platform` network. OperationsCenter connects to it via
+does not share the `platformdeployment-platform` network. OperationsCenter connects to it via
 `http://localhost:8080` (configurable via `OPERATIONS_CENTER_PLANE_URL`).
 
 ---

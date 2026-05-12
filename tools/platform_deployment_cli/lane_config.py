@@ -3,13 +3,14 @@
 """
 lane_config.py — Configuration model for the aider_local execution lane.
 
-Defines the data types and YAML loader for WorkStation's local lane configuration.
+Defines the data types and YAML loader for PlatformDeployment's local lane
+configuration.
 The config covers: which lane is enabled, which local model services back it,
 health check settings, and optional runtime paths.
 
 Config file location (copy-to-activate pattern):
-    config/workstation/local_lane.yaml
-    (template: config/workstation/local_lane.example.yaml)
+    config/platformdeployment/local_lane.yaml
+    (template: config/platformdeployment/local_lane.example.yaml)
 """
 
 from __future__ import annotations
@@ -71,9 +72,9 @@ class TinyModelServiceConfig:
 class RuntimePathsConfig:
     """Optional local filesystem paths for model data and runtime files."""
 
-    model_data_dir: str = "~/.workstation/models"
-    logs_dir: str = "~/.workstation/logs/aider_local"
-    pid_file: str = "~/.workstation/run/aider_local.pid"
+    model_data_dir: str = "~/.platformdeployment/models"
+    logs_dir: str = "~/.platformdeployment/logs/aider_local"
+    pid_file: str = "~/.platformdeployment/run/aider_local.pid"
 
 
 @dataclass
@@ -110,7 +111,7 @@ def load_local_lane_config(path: Path) -> LocalLaneConfig:
     """
     Parse a local_lane.yaml file and return a LocalLaneConfig.
 
-    Expected structure (see config/workstation/local_lane.example.yaml):
+    Expected structure (see config/platformdeployment/local_lane.example.yaml):
 
         lane:
           name: aider_local
@@ -133,9 +134,9 @@ def load_local_lane_config(path: Path) -> LocalLaneConfig:
           consecutive_failures_before_unhealthy: 2
 
         runtime_paths:
-          model_data_dir: "~/.workstation/models"
-          logs_dir: "~/.workstation/logs/aider_local"
-          pid_file: "~/.workstation/run/aider_local.pid"
+          model_data_dir: "~/.platformdeployment/models"
+          logs_dir: "~/.platformdeployment/logs/aider_local"
+          pid_file: "~/.platformdeployment/run/aider_local.pid"
 
     Raises:
         FileNotFoundError: if the path does not exist.
@@ -146,7 +147,7 @@ def load_local_lane_config(path: Path) -> LocalLaneConfig:
     if not path.exists():
         raise FileNotFoundError(
             f"Local lane config not found: {path}\n"
-            "Copy config/workstation/local_lane.example.yaml to local_lane.yaml first."
+            "Copy config/platformdeployment/local_lane.example.yaml to local_lane.yaml first."
         )
 
     with open(path, "r", encoding="utf-8") as fh:
@@ -211,9 +212,9 @@ def load_local_lane_config(path: Path) -> LocalLaneConfig:
     if not isinstance(rp_raw, dict):
         raise ValueError(f"'runtime_paths' in {path} must be a mapping.")
     runtime_paths = RuntimePathsConfig(
-        model_data_dir=rp_raw.get("model_data_dir", "~/.workstation/models"),
-        logs_dir=rp_raw.get("logs_dir", "~/.workstation/logs/aider_local"),
-        pid_file=rp_raw.get("pid_file", "~/.workstation/run/aider_local.pid"),
+        model_data_dir=rp_raw.get("model_data_dir", "~/.platformdeployment/models"),
+        logs_dir=rp_raw.get("logs_dir", "~/.platformdeployment/logs/aider_local"),
+        pid_file=rp_raw.get("pid_file", "~/.platformdeployment/run/aider_local.pid"),
     )
 
     return LocalLaneConfig(

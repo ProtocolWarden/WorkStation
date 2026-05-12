@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — status.sh
+# PlatformDeployment — status.sh
 # Print a full status summary: Docker Compose service state + health checks.
 # =============================================================================
 set -euo pipefail
@@ -17,7 +17,7 @@ if [[ -f "${REPO_ROOT}/.env" ]]; then
   set +a
 fi
 
-echo "=== WorkStation: status ==="
+echo "=== PlatformDeployment: status ==="
 echo "Timestamp: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo ""
 
@@ -32,5 +32,5 @@ echo "── HTTP health checks ────────────────
 echo ""
 echo "── Resource usage ────────────────────────────────────────────────────────"
 docker stats --no-stream \
-  workstation-switchboard 2>/dev/null || \
+  platformdeployment-switchboard 2>/dev/null || \
   echo "  (containers not running)"

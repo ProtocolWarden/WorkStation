@@ -1,0 +1,28 @@
+# =============================================================================
+# PlatformDeployment — Endpoint Registry
+# =============================================================================
+# Copy to endpoints.yaml before running CLI tools or smoke tests.
+# This file is the single source of truth for service URLs used by
+# platform_deployment_cli, health scripts, and tests.
+#
+# The default endpoint set tracks the selector-first architecture.
+# =============================================================================
+
+version: "1"
+
+services:
+
+  switchboard:
+    url: "http://localhost:20401"
+    health_path: "/health"
+    description: "SwitchBoard execution-lane selector"
+
+  status:
+    url: "http://localhost:20400"
+    health_path: "/health"
+    description: "PlatformDeployment stack-level status API"
+
+# ── Timeouts (seconds) ────────────────────────────────────────────────────────
+timeouts:
+  connect: 3
+  read: 10

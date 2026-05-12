@@ -1,6 +1,6 @@
 # Archon Service — Local Deployment
 
-This guide covers how WorkStation runs **Archon**, the workflow harness that
+This guide covers how PlatformDeployment runs **Archon**, the workflow harness that
 OperationsCenter dispatches to via `runtime_kind="http_async"` (production
 path, since OC #85) — the abstract `ArchonAdapter` ABC + ManualRunner closure
 remains for `StubArchonAdapter` in tests only.
@@ -26,11 +26,11 @@ is the standalone health/list helper.
 ## Prerequisites
 
 1. **Archon clone**: a sibling checkout of [ProtocolWarden/Archon][Archon] next to
-   WorkStation:
+   PlatformDeployment:
 
    ```text
    GitHub/
-     WorkStation/   ← this repo
+     PlatformDeployment/   ← this repo
      Archon/        ← git clone git@github.com:ProtocolWarden/Archon.git
    ```
 
@@ -49,7 +49,7 @@ is the standalone health/list helper.
 
 ## Starting Archon
 
-From the WorkStation repo root:
+From the PlatformDeployment repo root:
 
 ```sh
 docker compose \
@@ -105,8 +105,8 @@ Volumes under `runtime/archon/` persist between restarts.
 - **Build fails with bun lockfile errors**: `git -C ../Archon pull` to make
   sure the lockfile matches the source.
 - **Port collision on 3000**: set `PORT_ARCHON=3100` (or any free port) in
-  `.env` at the WorkStation repo root.
-- **Health check failing**: `docker logs workstation-archon` to see startup
+  `.env` at the PlatformDeployment repo root.
+- **Health check failing**: `docker logs platformdeployment-archon` to see startup
   errors. First-run bundle compile can take a minute.
 
 ---

@@ -1,7 +1,7 @@
 # Local Lane Architecture: aider_local
 
 This document describes the `aider_local` execution lane — what it is, why it lives
-in WorkStation, and what WorkStation's responsibilities are and are not.
+in PlatformDeployment, and what PlatformDeployment's responsibilities are and are not.
 
 ---
 
@@ -30,25 +30,25 @@ complement.
   multi-file transformations require a capable model. Use `claude_cli` or `codex_cli`
   for those.
 - **Universal backend execution.** The lane does not replace other execution lanes.
-  SwitchBoard selects between lanes; WorkStation just makes this one available.
-- **Orchestration ownership.** WorkStation manages the lifecycle of the local model
+  SwitchBoard selects between lanes; PlatformDeployment just makes this one available.
+- **Orchestration ownership.** PlatformDeployment manages the lifecycle of the local model
   services. It does not decide when to use the lane, which tasks to assign, or what
   the routing policy is. That is SwitchBoard's job.
 - **Repo-global decision policy.** Task proposal, confidence scoring, and strategic
-  decision-making live in OperationsCenter. WorkStation reports availability; it does not
+  decision-making live in OperationsCenter. PlatformDeployment reports availability; it does not
   shape the task queue.
 
 ---
 
-## Why this lane lives in WorkStation
+## Why this lane lives in PlatformDeployment
 
-WorkStation owns local infrastructure and local capability lifecycle. The rule is:
+PlatformDeployment owns local infrastructure and local capability lifecycle. The rule is:
 
-> If it makes a service run, WorkStation owns it.
+> If it makes a service run, PlatformDeployment owns it.
 
 The `aider_local` lane requires locally deployed tiny model services. Those services
 must be started, stopped, health-checked, and reported on. All of that is
-infrastructure operation — WorkStation's domain.
+infrastructure operation — PlatformDeployment's domain.
 
 The lane is definitively **not** a SwitchBoard concern (policy selection), a
 OperationsCenter concern (task proposal), or a kodo concern (execution orchestration).
@@ -56,8 +56,8 @@ The line is clean:
 
 | Concern | Owner |
 |---------|-------|
-| Deploying/starting the local model server | WorkStation |
-| Checking if the lane is available | WorkStation |
+| Deploying/starting the local model server | PlatformDeployment |
+| Checking if the lane is available | PlatformDeployment |
 | Deciding which lane to use for a task | SwitchBoard |
 | Running Aider against the local models | kodo (`aider_local` backend process) |
 | Deciding what task to run | OperationsCenter |
@@ -76,11 +76,11 @@ OperationsCenter → SwitchBoard → [lane decision: aider_local]
                           Aider process (local subprocess)
                                        │
                                        ▼
-                          Tiny model service (WorkStation-deployed)
+                          Tiny model service (PlatformDeployment-deployed)
                           e.g. Ollama serving qwen2.5-coder:1.5b
 ```
 
-WorkStation sits outside this invocation chain. It deploys and runs the tiny model
+PlatformDeployment sits outside this invocation chain. It deploys and runs the tiny model
 service that OperationsCenter's execution boundary eventually calls. It also provides lifecycle management
 and availability reporting that SwitchBoard can consult before assigning work.
 
@@ -88,7 +88,7 @@ and availability reporting that SwitchBoard can consult before assigning work.
 
 ## Lane hosting vs. lane selection
 
-**Lane hosting** (WorkStation's job):
+**Lane hosting** (PlatformDeployment's job):
 - Deploy and serve the local model
 - Start, stop, and restart the model service
 - Check whether the service is reachable
@@ -101,7 +101,7 @@ and availability reporting that SwitchBoard can consult before assigning work.
 - Choose `aider_local`, `claude_cli`, or `codex_cli`
 - Return the lane decision
 
-WorkStation does not make routing decisions. SwitchBoard does not manage local
+PlatformDeployment does not make routing decisions. SwitchBoard does not manage local
 model processes. The boundary is explicit.
 
 ---
@@ -110,27 +110,27 @@ model processes. The boundary is explicit.
 
 A clean lifecycle for the local lane looks like this:
 
-1. **Configure** — copy `config/workstation/local_lane.example.yaml` to
+1. **Configure** — copy `config/platformdeployment/local_lane.example.yaml` to
    `local_lane.yaml`, set `lane.enabled: true`, configure model endpoints.
 
-2. **Start** — run `python -m workstation_cli lane start aider_local`.
-   WorkStation checks or starts configured model services, polls for readiness,
+2. **Start** — run `python -m platform_deployment_cli lane start aider_local`.
+   PlatformDeployment checks or starts configured model services, polls for readiness,
    and reports the final state.
 
-3. **Check** — run `python -m workstation_cli lane status aider_local` or
+3. **Check** — run `python -m platform_deployment_cli lane status aider_local` or
    `lane health aider_local` to see live state.
 
 4. **Use** — SwitchBoard queries availability; kodo sends requests to the local
    model endpoint when the lane is selected.
 
-5. **Stop** — run `python -m workstation_cli lane stop aider_local` to stop
-   any WorkStation-managed model processes cleanly.
+5. **Stop** — run `python -m platform_deployment_cli lane stop aider_local` to stop
+   any PlatformDeployment-managed model processes cleanly.
 
 ---
 
 ## Local model services
 
-WorkStation supports two small models configured in `local_lane.yaml`:
+PlatformDeployment supports two small models configured in `local_lane.yaml`:
 
 | Role | Default model | VRAM | Purpose |
 |------|--------------|------|---------|
@@ -142,8 +142,8 @@ comfortably via Ollama alongside a running development environment.
 
 ### Managed vs. externally-managed services
 
-If `start_command` is set in the model config, WorkStation manages the process
-lifecycle. If it is absent, WorkStation assumes the service is externally managed
+If `start_command` is set in the model config, PlatformDeployment manages the process
+lifecycle. If it is absent, PlatformDeployment assumes the service is externally managed
 (e.g. Ollama running as a system service) and only checks reachability.
 
 ---
@@ -166,7 +166,7 @@ lifecycle. If it is absent, WorkStation assumes the service is externally manage
 
 The following are not in scope:
 
-- OperationsCenter-to-WorkStation live availability API
+- OperationsCenter-to-PlatformDeployment live availability API
 - Cross-repo orchestration
 - Queue or scheduler integration
 - Automatic model download or provisioning

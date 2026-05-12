@@ -1,14 +1,13 @@
 # SPDX-License-Identifier: SSPL-1.0
 # Copyright (C) 2026 ProtocolWarden
-"""Discovery tests for tools.workstation_cli.local_manifest."""
+"""Discovery tests for tools.platform_deployment_cli.local_manifest."""
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest
 
-from workstation_cli.local_manifest import (
+from platform_deployment_cli.local_manifest import (
     ENV_OVERRIDE,
     LocalManifestDiscoveryError,
     REPO_LOCAL_PATH,
@@ -34,20 +33,14 @@ class TestUserConfigDir:
     def test_default_is_under_home(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path))
         d = user_config_dir()
-        assert d == tmp_path / ".config" / "workstation" / "manifests"
+        assert d == tmp_path / ".config" / "platformdeployment" / "manifests"
 
     def test_xdg_config_home_respected(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path / "xdg"))
         d = user_config_dir()
-        assert d == tmp_path / "xdg" / "workstation" / "manifests"
-
-
-# ---------------------------------------------------------------------------
-# candidate_paths
-# ---------------------------------------------------------------------------
-
+        assert d == tmp_path / "xdg" / "platformdeployment" / "manifests"
 
 class TestCandidatePaths:
     def test_only_user_config_when_no_override_no_repo_root(
@@ -56,7 +49,7 @@ class TestCandidatePaths:
         monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path / "xdg"))
         candidates = candidate_paths("vfa")
         assert candidates == [
-            tmp_path / "xdg" / "workstation" / "manifests" / "vfa.local.yaml"
+            tmp_path / "xdg" / "platformdeployment" / "manifests" / "vfa.local.yaml",
         ]
 
     def test_override_first_then_user_then_repo(
@@ -67,7 +60,7 @@ class TestCandidatePaths:
         candidates = candidate_paths("vfa", repo_root=tmp_path / "repo")
         assert candidates[0] == Path("/some/explicit/path.yaml")
         assert candidates[1] == (
-            tmp_path / "xdg" / "workstation" / "manifests" / "vfa.local.yaml"
+            tmp_path / "xdg" / "platformdeployment" / "manifests" / "vfa.local.yaml"
         )
         assert candidates[2] == tmp_path / "repo" / REPO_LOCAL_PATH
 
@@ -95,7 +88,7 @@ class TestDiscover:
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         xdg = tmp_path / "xdg"
-        manifests = xdg / "workstation" / "manifests"
+        manifests = xdg / "platformdeployment" / "manifests"
         manifests.mkdir(parents=True)
         target = manifests / "vfa.local.yaml"
         target.write_text("manifest_kind: local\nmanifest_version: '1.0.0'\n", encoding="utf-8")
@@ -118,7 +111,7 @@ class TestDiscover:
     ) -> None:
         # User config exists
         xdg = tmp_path / "xdg"
-        manifests = xdg / "workstation" / "manifests"
+        manifests = xdg / "platformdeployment" / "manifests"
         manifests.mkdir(parents=True)
         user_target = manifests / "vfa.local.yaml"
         user_target.write_text("# user config\n", encoding="utf-8")
@@ -133,7 +126,7 @@ class TestDiscover:
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         xdg = tmp_path / "xdg"
-        manifests = xdg / "workstation" / "manifests"
+        manifests = xdg / "platformdeployment" / "manifests"
         manifests.mkdir(parents=True)
         user_target = manifests / "vfa.local.yaml"
         user_target.write_text("# user\n", encoding="utf-8")
@@ -143,12 +136,6 @@ class TestDiscover:
         (topology / "local_manifest.yaml").write_text("# repo\n", encoding="utf-8")
         monkeypatch.setenv("XDG_CONFIG_HOME", str(xdg))
         assert discover_local_manifest("vfa", repo_root=repo) == user_target
-
-
-# ---------------------------------------------------------------------------
-# Validation
-# ---------------------------------------------------------------------------
-
 
 class TestProjectNameValidation:
     @pytest.mark.parametrize(

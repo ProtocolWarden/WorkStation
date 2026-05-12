@@ -2,11 +2,11 @@
 # Copyright (C) 2026 ProtocolWarden
 """
 status.py — aggregate_status() produces a structured JSON-serialisable summary
-of the whole WorkStation stack.
+of the whole PlatformDeployment stack.
 
 Output shape:
 {
-    "platform": "workstation",
+    "platform": "platformdeployment",
     "status": "healthy" | "degraded" | "unhealthy",
     "timestamp": "<ISO-8601 UTC>",
     "services": {
@@ -94,7 +94,7 @@ def aggregate_status(services: Dict[str, "ServiceConfig"]) -> dict:
             platform_status = "healthy"
 
     return {
-        "platform": "workstation",
+        "platform": "platformdeployment",
         "status": platform_status,
         "timestamp": timestamp,
         "services": service_summary,

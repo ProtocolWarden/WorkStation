@@ -1,6 +1,6 @@
 # Port Map
 
-All ports used by the WorkStation stack.
+All ports used by the PlatformDeployment stack.
 
 ---
 

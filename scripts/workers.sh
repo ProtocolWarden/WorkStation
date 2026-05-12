@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — workers.sh
+# PlatformDeployment — workers.sh
 # Shim for OperationsCenter watcher lifecycle.
 #
-# WorkStation owns the startup/shutdown sequence; OperationsCenter owns the
+# PlatformDeployment owns the startup/shutdown sequence; OperationsCenter owns the
 # logic inside its own script. This shim bridges the two.
 #
 # Usage:
@@ -18,10 +18,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OC_ROOT="${OPERATIONS_CENTER_ROOT:-${HOME}/Documents/GitHub/OperationsCenter}"
 OC_SCRIPT="${OC_ROOT}/scripts/operations-center.sh"
 
-_log()  { printf '[WorkStation/workers] %s\n' "$*"; }
-_ok()   { printf '[WorkStation/workers] %-40s [OK]\n'   "$1"; }
-_warn() { printf '[WorkStation/workers] %-40s [WARN] %s\n' "$1" "$2"; }
-_fail() { printf '[WorkStation/workers] %-40s [FAIL] %s\n' "$1" "$2" >&2; exit 1; }
+_log()  { printf '[PlatformDeployment/workers] %s\n' "$*"; }
+_ok()   { printf '[PlatformDeployment/workers] %-40s [OK]\n'   "$1"; }
+_warn() { printf '[PlatformDeployment/workers] %-40s [WARN] %s\n' "$1" "$2"; }
+_fail() { printf '[PlatformDeployment/workers] %-40s [FAIL] %s\n' "$1" "$2" >&2; exit 1; }
 
 if [[ ! -f "${OC_SCRIPT}" ]]; then
   _warn "OperationsCenter" "not found at ${OC_ROOT} — set OPERATIONS_CENTER_ROOT to override"

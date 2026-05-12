@@ -15,7 +15,7 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO_ROOT / "tools"))
 
-from workstation_cli.lane_models import (  # noqa: E402
+from platform_deployment_cli.lane_models import (  # noqa: E402
     LaneAvailability,
     LaneCapability,
     LaneState,

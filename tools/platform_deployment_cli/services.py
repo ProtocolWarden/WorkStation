@@ -3,8 +3,8 @@
 """
 services.py — ServiceConfig dataclass and YAML loader.
 
-Parses config/workstation/endpoints.yaml into typed ServiceConfig objects
-that the rest of workstation_cli consumes.
+Parses config/platformdeployment/endpoints.yaml into typed ServiceConfig objects
+that the rest of PlatformDeployment's CLI consumes.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover
 
 @dataclass
 class ServiceConfig:
-    """Holds the configuration for a single WorkStation service endpoint."""
+    """Holds the configuration for a single PlatformDeployment service endpoint."""
 
     name: str
     url: str
@@ -40,7 +40,7 @@ def load_services_from_yaml(path: Path) -> Dict[str, ServiceConfig]:
     """
     Parse an endpoints.yaml file and return a dict of {service_name: ServiceConfig}.
 
-    Example YAML structure (see config/workstation/endpoints.example.yaml):
+    Example YAML structure (see config/platformdeployment/endpoints.example.yaml):
 
         version: "1"
         services:
@@ -63,7 +63,7 @@ def load_services_from_yaml(path: Path) -> Dict[str, ServiceConfig]:
     if not path.exists():
         raise FileNotFoundError(
             f"Endpoints config not found: {path}\n"
-            "Copy config/workstation/endpoints.example.yaml to endpoints.yaml first."
+            "Copy config/platformdeployment/endpoints.example.yaml to endpoints.yaml first."
         )
 
     with open(path, "r", encoding="utf-8") as fh:

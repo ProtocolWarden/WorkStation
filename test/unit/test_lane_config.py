@@ -18,7 +18,7 @@ import sys
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO_ROOT / "tools"))
 
-from workstation_cli.lane_config import (  # noqa: E402
+from platform_deployment_cli.lane_config import (  # noqa: E402
     HealthCheckConfig,
     LocalLaneConfig,
     RuntimePathsConfig,
@@ -145,7 +145,7 @@ class TestLoadMinimalConfig:
         p = _minimal_yaml(tmp_path)
         cfg = load_local_lane_config(p)
         assert isinstance(cfg.runtime_paths, RuntimePathsConfig)
-        assert "workstation" in cfg.runtime_paths.model_data_dir
+        assert "platformdeployment" in cfg.runtime_paths.model_data_dir
 
 
 # ---------------------------------------------------------------------------
@@ -324,26 +324,26 @@ class TestDefaultLocalLaneConfig:
 
 class TestExampleFileParses:
     def test_example_file_exists(self):
-        example = _REPO_ROOT / "config" / "workstation" / "local_lane.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "local_lane.example.yaml"
         assert example.exists(), f"Example file not found: {example}"
 
     def test_example_file_is_valid(self):
-        example = _REPO_ROOT / "config" / "workstation" / "local_lane.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "local_lane.example.yaml"
         cfg = load_local_lane_config(example)
         assert isinstance(cfg, LocalLaneConfig)
 
     def test_example_lane_name(self):
-        example = _REPO_ROOT / "config" / "workstation" / "local_lane.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "local_lane.example.yaml"
         cfg = load_local_lane_config(example)
         assert cfg.lane_name == "aider_local"
 
     def test_example_has_two_models(self):
-        example = _REPO_ROOT / "config" / "workstation" / "local_lane.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "local_lane.example.yaml"
         cfg = load_local_lane_config(example)
         assert len(cfg.models) == 2
 
     def test_example_model_endpoints(self):
-        example = _REPO_ROOT / "config" / "workstation" / "local_lane.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "local_lane.example.yaml"
         cfg = load_local_lane_config(example)
         endpoints = [m.endpoint for m in cfg.models]
         # Both models use the same Ollama instance on port 11434 — differentiated by model_id

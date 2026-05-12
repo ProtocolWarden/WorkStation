@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — down.ps1
+# PlatformDeployment — down.ps1
 # Stop and remove all stack containers.
 # =============================================================================
 #Requires -Version 5.1
@@ -13,7 +13,7 @@ $ScriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot    = Split-Path -Parent $ScriptDir
 $ComposeFile = Join-Path $RepoRoot 'compose\docker-compose.yml'
 
-Write-Host "=== WorkStation: stopping stack ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: stopping stack ===" -ForegroundColor Cyan
 
 docker compose `
     --file $ComposeFile `

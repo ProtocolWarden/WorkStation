@@ -1,21 +1,29 @@
 # Architecture
 
-WorkStation is the local platform host for the current stack.
+PlatformDeployment is the current repository identity for the
+`PlatformDeployment` plane of the stack.
 
 ```text
 OperationsCenter proposes work -> SwitchBoard selects lane/backend
                            -> OperationsCenter execution boundary executes
                                        ^               ^
                                        |               |
-                        WorkStation deploys services    local lane infra
+                PlatformDeployment deploys services     local lane infra
 ```
 
-WorkStation owns:
+PlatformDeployment owns:
 
 - SwitchBoard deployment and health checks
 - local lane infrastructure for `aider_local`
 - endpoint/status configuration
 - compose scripts and operator utilities
+
+PlatformDeployment does not own:
+
+- platform ontology
+- public topology language
+- private topology truth
+- orchestration policy
 
 Current reference docs:
 

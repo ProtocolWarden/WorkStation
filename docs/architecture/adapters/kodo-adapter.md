@@ -40,7 +40,7 @@ local lanes use `runtime_kind="subprocess"`; archon and openclaw use
   stdout/stderr capture) — that is `ExecutorRuntime`'s job
 - Routing policy — that is SwitchBoard's job
 - Task proposal generation — that is OperationsCenter domain logic
-- Local model hosting — that is WorkStation's job
+- Local model hosting — that is PlatformDeployment's job
 - Cross-backend orchestration — that is Archon's job
 - Canonical contract definition — `cxrp` (orchestration) and `rxp` (runtime)
   own those; OC's `operations_center.contracts` are internal Pydantic mirrors
@@ -92,7 +92,7 @@ src/operations_center/backends/kodo/
 ```
 
 All kodo-specific types are quarantined inside this namespace. They do not
-appear in OperationsCenter domain code, SwitchBoard, or WorkStation.
+appear in OperationsCenter domain code, SwitchBoard, or PlatformDeployment.
 
 ---
 

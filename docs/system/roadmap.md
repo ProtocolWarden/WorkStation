@@ -10,10 +10,10 @@ The foundation provides a reliable, reproducible local stack that any developer 
 
 - Docker Compose orchestration for the selector stack.
 - `scripts/` — `up`, `down`, `restart`, `health`, `status`, `logs` for both Bash and PowerShell.
-- `workstation_cli` Python CLI with `up`, `down`, `health`, `status`, and `status --json`.
-- Endpoint registry (`config/workstation/endpoints.yaml`) as the single source of truth for service URLs.
-- Service registry (`config/workstation/services.yaml`) declaring required vs optional services.
-- Port map (`config/workstation/ports.yaml`) as the canonical port reference.
+- `platform_deployment_cli` Python CLI with `up`, `down`, `health`, `status`, and `status --json`.
+- Endpoint registry (`config/platformdeployment/endpoints.yaml`) as the single source of truth for service URLs.
+- Service registry (`config/platformdeployment/services.yaml`) declaring required vs optional services.
+- Port map (`config/platformdeployment/ports.yaml`) as the canonical port reference.
 - Health model with `healthy` / `degraded` / `unhealthy` semantics tied to the required flag.
 - Example config files for all services (copy-to-activate pattern, never committed live).
 - Smoke tests that skip gracefully when the stack is not running.
@@ -34,10 +34,10 @@ These are not committed to and have no timeline. They represent directions that 
 
 ### Developer Experience
 
-- `workstation_cli logs` sub-command as a Python alternative to `scripts/logs.sh`.
-- `workstation_cli restart` sub-command.
-- Shell completion for `workstation_cli` (bash, zsh, fish).
-- `--watch` / poll mode for `workstation_cli status`.
+- `platform_deployment_cli logs` sub-command as a Python alternative to `scripts/logs.sh`.
+- `platform_deployment_cli restart` sub-command.
+- Shell completion for `platform_deployment_cli` (bash, zsh, fish).
+- `--watch` / poll mode for `platform_deployment_cli status`.
 
 ### Configuration
 

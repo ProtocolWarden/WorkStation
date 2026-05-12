@@ -28,7 +28,7 @@ The doc is the gate referenced by:
 
 ## What we're integrating with
 
-Archon is a TypeScript/bun monorepo (deployed by WorkStation via
+Archon is a TypeScript/bun monorepo (deployed by PlatformDeployment via
 `compose/profiles/archon.yml`, default `http://localhost:3000`). Its
 workflow surface is conversation-scoped and dispatches asynchronously.
 
@@ -338,7 +338,7 @@ production path — it stays for `StubArchonAdapter` test usage only.
 
 The three implementation ambiguities surfaced during design were resolved 2026-05-07:
 
-1. **`codebaseId` semantics — omit in v1.** Archon infers from cwd or operates without it; the `createConversationBodySchema` already makes the field optional. If operators want explicit codebase registration for Command Center sidebar grouping, that's a v2 enhancement (`POST /api/codebases` at WorkStation startup) — not blocking for the integration.
+1. **`codebaseId` semantics — omit in v1.** Archon infers from cwd or operates without it; the `createConversationBodySchema` already makes the field optional. If operators want explicit codebase registration for Command Center sidebar grouping, that's a v2 enhancement (`POST /api/codebases` at PlatformDeployment startup) — not blocking for the integration.
 
 2. **`task_branch` propagation — strict D1, no prompt prefix.** Earlier draft suggested a one-line *"On branch {task_branch}: {goal_text}"* prefix. Rejected: that's prompt engineering by another name and weakens D1. Instead:
    - `task_branch` goes into `RuntimeInvocation.metadata` as `archon.task_branch` for OC-side observability.
@@ -382,7 +382,7 @@ Operator signoff received 2026-05-07:
 
 ## Real-API findings (2026-05-07 live validation)
 
-After OC #85 merged, the dispatcher was driven against a live Archon container (built from `ProtocolWarden/Archon@fd6d75e7`, deployed via `WorkStation/compose/profiles/archon.yml`). All design assumptions held except three:
+After OC #85 merged, the dispatcher was driven against a live Archon container (built from `ProtocolWarden/Archon@fd6d75e7`, deployed via `PlatformDeployment/compose/profiles/archon.yml`). All design assumptions held except three:
 
 ### F1 — Bundled-default workflow names differ from the design's table
 

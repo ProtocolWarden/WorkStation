@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — health.sh
+# PlatformDeployment — health.sh
 # Curl the /health endpoint of each service and report pass/fail.
 # Exit code: 0 if all healthy, 1 if any service is unhealthy/unreachable.
 # =============================================================================
@@ -47,7 +47,7 @@ check_health() {
   fi
 }
 
-echo "=== WorkStation: health check ==="
+echo "=== PlatformDeployment: health check ==="
 echo ""
 check_health "SwitchBoard" "http://localhost:${PORT_SWITCHBOARD}/health"
 echo ""

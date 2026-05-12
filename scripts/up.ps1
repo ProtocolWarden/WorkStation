@@ -1,5 +1,5 @@
 # =============================================================================
-# WorkStation — up.ps1
+# PlatformDeployment — up.ps1
 # Start the full stack in detached mode and print service status.
 # =============================================================================
 #Requires -Version 5.1
@@ -27,7 +27,7 @@ if (Test-Path $EnvFile) {
     Write-Warning ".env not found — using defaults. Run: Copy-Item .env.example .env"
 }
 
-Write-Host "=== WorkStation: starting stack ===" -ForegroundColor Cyan
+Write-Host "=== PlatformDeployment: starting stack ===" -ForegroundColor Cyan
 Write-Host "Compose file: $ComposeFile"
 Write-Host ""
 

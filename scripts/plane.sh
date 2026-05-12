@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# WorkStation — scripts/plane.sh
+# PlatformDeployment — scripts/plane.sh
 # Canonical Plane lifecycle manager for the local platform stack.
 #
 # Usage:
@@ -8,7 +8,7 @@
 #   bash scripts/plane.sh down     stop Plane containers
 #   bash scripts/plane.sh status   check whether Plane is reachable
 #
-# Runtime data is stored in WorkStation/runtime/plane/ (gitignored).
+# Runtime data is stored in PlatformDeployment/runtime/plane/ (gitignored).
 # Provider and workspace credentials are NOT stored here — configure those
 # in your Plane workspace after first startup.
 #
@@ -155,7 +155,7 @@ fi
 
 case "${cmd}" in
   up)
-    echo "=== WorkStation: Plane up ==="
+    echo "=== PlatformDeployment: Plane up ==="
     echo ""
     echo "  Runtime: ${PLANE_RUNTIME_DIR}"
     echo "  URL    : ${PLANE_URL}"
@@ -169,7 +169,7 @@ case "${cmd}" in
     wait_until_ready
     ;;
   down)
-    echo "=== WorkStation: Plane down ==="
+    echo "=== PlatformDeployment: Plane down ==="
     if [[ -x "${SETUP_SH}" ]]; then
       echo "  Stopping Plane containers..."
       if ! run_setup_menu 3; then

@@ -19,7 +19,7 @@ import sys
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO_ROOT / "tools"))
 
-from workstation_cli.config import ServiceConfig, load_endpoints as load_services_from_yaml  # noqa: E402
+from platform_deployment_cli.config import ServiceConfig, load_endpoints as load_services_from_yaml  # noqa: E402
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -171,18 +171,18 @@ class TestExampleFileParses:
     """Verify that the shipped example file is valid and parseable."""
 
     def test_example_endpoints_yaml_is_valid(self):
-        example = _REPO_ROOT / "config" / "workstation" / "endpoints.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "endpoints.example.yaml"
         assert example.exists(), f"Example file not found: {example}"
         services = load_services_from_yaml(example)
         assert len(services) >= 1, "Expected at least switchboard."
         assert "switchboard" in services
 
     def test_example_switchboard_port(self):
-        example = _REPO_ROOT / "config" / "workstation" / "endpoints.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "endpoints.example.yaml"
         services = load_services_from_yaml(example)
         assert ":20401" in services["switchboard"].url
 
     def test_example_contains_only_active_services(self):
-        example = _REPO_ROOT / "config" / "workstation" / "endpoints.example.yaml"
+        example = _REPO_ROOT / "config" / "platformdeployment" / "endpoints.example.yaml"
         services = load_services_from_yaml(example)
         assert set(services) == {"switchboard", "status"}

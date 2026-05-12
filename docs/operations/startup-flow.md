@@ -1,6 +1,6 @@
 # Startup Flow
 
-This document describes the numbered steps to go from a clean checkout to a fully running, healthy WorkStation stack.
+This document describes the numbered steps to go from a clean checkout to a fully running, healthy PlatformDeployment stack.
 
 ---
 
@@ -14,7 +14,7 @@ Copy all example configuration files to their live locations and pull Docker ima
 ```bash
 cp .env.example .env
 cp config/switchboard/policy.example.yaml   config/switchboard/policy.yaml
-cp config/workstation/endpoints.example.yaml config/workstation/endpoints.yaml
+cp config/platformdeployment/endpoints.example.yaml config/platformdeployment/endpoints.yaml
 ```
 
 **Windows (PowerShell):**
@@ -52,22 +52,22 @@ docker compose -f compose/docker-compose.yml pull
 
 Expected output:
 ```
-=== WorkStation: starting platform ===
+=== PlatformDeployment: starting platform ===
 
-[WorkStation] Validating environment...            [OK]
+[PlatformDeployment] Validating environment...            [OK]
 
-[WorkStation] Starting SwitchBoard...
+[PlatformDeployment] Starting SwitchBoard...
   ...
-[WorkStation] Waiting for SwitchBoard on :20401 (up to 60s)...
-[WorkStation] SwitchBoard (http://localhost:20401) [OK]
+[PlatformDeployment] Waiting for SwitchBoard on :20401 (up to 60s)...
+[PlatformDeployment] SwitchBoard (http://localhost:20401) [OK]
 
-[WorkStation] Checking Plane...
-[WorkStation] Plane                                [SKIP] set PLANE_ENABLED=true in .env to enable
+[PlatformDeployment] Checking Plane...
+[PlatformDeployment] Plane                                [SKIP] set PLANE_ENABLED=true in .env to enable
 
-[WorkStation] Checking local lane (aider_local)...
-[WorkStation] aider                                [WARN] binary not found — aider_local lane unavailable
+[PlatformDeployment] Checking local lane (aider_local)...
+[PlatformDeployment] aider                                [WARN] binary not found — aider_local lane unavailable
 
-=== WorkStation ready ===
+=== PlatformDeployment ready ===
 
   SwitchBoard      http://localhost:20401
 
@@ -92,7 +92,7 @@ The stack is ready to accept routing requests. Send a canonical proposal to Swit
 ```bash
 curl -s \
   -H "Content-Type: application/json" \
-  -d '{"task_id":"demo-1","project_id":"workstation-demo","task_type":"documentation","execution_mode":"goal","goal_text":"Refresh README wording","target":{"repo_key":"docs","clone_url":"https://example.invalid/docs.git","base_branch":"main","allowed_paths":[]},"priority":"normal","risk_level":"low","constraints":{"allowed_paths":[],"require_clean_validation":true},"validation_profile":{"profile_name":"default","commands":[]},"branch_policy":{"push_on_success":true,"open_pr":false},"labels":[]}' \
+  -d '{"task_id":"demo-1","project_id":"platformdeployment-demo","task_type":"documentation","execution_mode":"goal","goal_text":"Refresh README wording","target":{"repo_key":"docs","clone_url":"https://example.invalid/docs.git","base_branch":"main","allowed_paths":[]},"priority":"normal","risk_level":"low","constraints":{"allowed_paths":[],"require_clean_validation":true},"validation_profile":{"profile_name":"default","commands":[]},"branch_policy":{"push_on_success":true,"open_pr":false},"labels":[]}' \
   http://localhost:20401/route
 ```
 
