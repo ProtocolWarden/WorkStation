@@ -36,4 +36,4 @@ services:
 
 volumes:
   ollama_data:
-    name: workstation_ollama_data
+    name: platformdeployment_ollama_data

@@ -18,17 +18,17 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSTATION_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+PLATFORM_DEPLOYMENT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 # ── Runtime data directory (gitignored) ──────────────────────────────────────
-PLANE_RUNTIME_DIR="${WORKSTATION_ROOT}/runtime/plane"
+PLANE_RUNTIME_DIR="${PLATFORM_DEPLOYMENT_ROOT}/runtime/plane"
 PLANE_APP_DIR="${PLANE_RUNTIME_DIR}/plane-app"
 SETUP_SH="${PLANE_RUNTIME_DIR}/setup.sh"
 PLANE_ENV="${PLANE_APP_DIR}/plane.env"
-LOG_DIR="${WORKSTATION_ROOT}/runtime/logs/plane"
+LOG_DIR="${PLATFORM_DEPLOYMENT_ROOT}/runtime/logs/plane"
 
 # ── Load optional config/plane/.env overrides ────────────────────────────────
-PLANE_CONFIG_ENV="${WORKSTATION_ROOT}/config/plane/.env"
+PLANE_CONFIG_ENV="${PLATFORM_DEPLOYMENT_ROOT}/config/plane/.env"
 if [[ -f "${PLANE_CONFIG_ENV}" ]]; then
   set -a
   # shellcheck disable=SC1090

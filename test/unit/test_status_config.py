@@ -157,7 +157,7 @@ class TestLoadPorts:
 # ── Tests: load_config ────────────────────────────────────────────────────────
 
 class TestLoadConfig:
-    def test_returns_workstation_config(self, config_dir: Path):
+    def test_returns_platformdeployment_config(self, config_dir: Path):
         cfg = load_config(config_dir)
         assert isinstance(cfg, PlatformDeploymentConfig)
 

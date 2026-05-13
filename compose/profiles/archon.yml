@@ -43,7 +43,7 @@ services:
       # Source these from .env at the repo root if needed
       DATABASE_URL: "${ARCHON_DATABASE_URL:-}"
     volumes:
-      # Persist archon state under workstation/runtime/archon
+      # Persist archon state under platformdeployment/runtime/archon
       - ../runtime/archon:/.archon
     networks:
       - platform

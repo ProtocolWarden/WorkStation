@@ -35,7 +35,7 @@ services:
   # Uncomment if you want to inspect HTTP traffic between services.
   # mitmproxy:
   #   image: mitmproxy/mitmproxy:latest
-  #   container_name: workstation-mitmproxy
+  #   container_name: platformdeployment-mitmproxy
   #   command: mitmweb --web-host 0.0.0.0 --listen-host 0.0.0.0
   #   ports:
   #     - "8080:8080"   # proxy

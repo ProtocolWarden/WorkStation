@@ -1,5 +1,14 @@
 # Mission Log
 
+## 2026-05-13 — WorkStation → PlatformDeployment hard cutover
+
+- Renamed all remaining `WorkStation`/`workstation`/`WORKSTATION` references to `PlatformDeployment` in scripts, compose files, and tests.
+- `WORKSTATION_ROOT` → `PLATFORM_DEPLOYMENT_ROOT` in `scripts/plane.sh`.
+- Docker volume `workstation_ollama_data` → `platformdeployment_ollama_data`.
+- Container name `workstation-mitmproxy` → `platformdeployment-mitmproxy`.
+- Archon compose comment updated.
+- Test rename: `test_returns_workstation_config` → `test_returns_platformdeployment_config`.
+
 ## 2026-05-13 — Exclude boundary runner test from T8
 
 `test_custodian_boundary_runner.py` exercises a bash script via subprocess and
