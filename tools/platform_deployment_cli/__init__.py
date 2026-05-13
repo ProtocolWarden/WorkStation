@@ -11,3 +11,13 @@ from .local_manifest import (
     discover_local_manifest,
     user_config_dir,
 )
+
+__all__ = [
+    "ENV_OVERRIDE",
+    "LocalManifestDiscoveryError",
+    "REPO_LOCAL_PATH",
+    "USER_CONFIG_SUBDIR",
+    "candidate_paths",
+    "discover_local_manifest",
+    "user_config_dir",
+]
