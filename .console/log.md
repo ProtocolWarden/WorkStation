@@ -1,5 +1,10 @@
 # Mission Log
 
+## 2026-05-13 — Exclude boundary runner test from T8
+
+`test_custodian_boundary_runner.py` exercises a bash script via subprocess and
+never imports from `platform_deployment_cli` — T8 exclusion added.
+
 ## 2026-05-08 — Wire pre-commit hook
 
 Added .hooks/pre-commit (log.md enforcement) and set core.hooksPath = .hooks.

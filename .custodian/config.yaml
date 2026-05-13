@@ -69,6 +69,7 @@ audit:
       - "tools/platform_deployment_cli/**"
     T8:
       - test/unit/test_legacy_runtime_removal.py
+      - test/unit/test_custodian_boundary_runner.py
     D3:
       # CLI mains exit via SystemExit / sys.exit() — they don't return.
       - tools/platform_deployment_cli/main.py
