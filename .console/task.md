@@ -5,12 +5,17 @@ _Replace contents when the objective changes. Do not accumulate history here —
 
 ## Objective
 
-[One or two sentences. What are you building or fixing right now?]
+Add a PlatformDeployment convenience wrapper that materializes a RepoGraph
+boundary artifact through PrivateManifest and then runs Custodian locally or in
+CI without changing Custodian semantics.
 
 ## Context
 
-[Background that makes the objective clearer — constraints, dependencies, recent decisions.]
+Wrapper belongs to PlatformDeployment as runtime/topography glue. Custodian
+must still fail closed and only consume REPOGRAPH_BOUNDARY_ARTIFACT_FILE.
 
 ## Definition of Done
 
-[What does success look like? How will you know this is complete?]
+Wrapper script, docs, and tests are in place; local artifact acceptance,
+missing-artifact failure, generated-artifact flow, exit-code preservation, and
+keep-artifacts mode are all verified.

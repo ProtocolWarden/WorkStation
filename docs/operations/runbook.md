@@ -150,6 +150,47 @@ Then restart to apply:
 
 ---
 
+## Running Custodian With RepoGraph Boundary Artifacts
+
+Custodian intentionally fails closed when `REPOGRAPH_BOUNDARY_ARTIFACT_FILE` is
+missing. PlatformDeployment provides a convenience wrapper that materializes
+the boundary artifact through the approved `PrivateManifest` export flow,
+exports the required environment variable, and then invokes Custodian.
+
+```bash
+./scripts/custodian/run_with_boundary.sh \
+  --repo-root "$(pwd)" \
+  --profile PUBLIC_SAFE
+```
+
+If the boundary artifact already exists, pass it directly:
+
+```bash
+./scripts/custodian/run_with_boundary.sh \
+  --repo-root "$(pwd)" \
+  --boundary-artifact /path/to/boundary_disclosure_artifact.json
+```
+
+### CI usage
+
+In CI, call the same wrapper and let it materialize a temporary artifact unless
+your workflow already has a vetted artifact file:
+
+```bash
+./scripts/custodian/run_with_boundary.sh \
+  --repo-root "$GITHUB_WORKSPACE" \
+  --custodian-command "custodian-multi --repos \"$GITHUB_WORKSPACE\" --fail-on-findings --no-color"
+```
+
+### Debugging
+
+Add `--debug` to print safe provenance details and `--keep-artifacts` to retain
+the temporary artifact directory for inspection. The wrapper never prints
+forbidden private names; if artifact generation fails, fix the
+`PrivateManifest` export flow rather than Custodian.
+
+---
+
 ## Plane (OperationsCenter dependency)
 
 Plane is managed by a separate script, not by `docker-compose.yml`. PlatformDeployment is the canonical owner of this infra.

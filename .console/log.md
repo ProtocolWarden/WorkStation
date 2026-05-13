@@ -12,6 +12,10 @@ _Not a task tracker — that's backlog.md. Keep entries concise and dated._
   custodian audit path now materializes `REPOGRAPH_BOUNDARY_ARTIFACT_FILE` from a
   source locator before invoking Custodian, and the remaining deployment-facing
   templates were aligned to `PlatformDeployment` naming.
+- 2026-05-12 — Added the PlatformDeployment Custodian convenience runner at
+  `scripts/custodian/run_with_boundary.sh`; it materializes a boundary artifact
+  through `PrivateManifest`, exports `REPOGRAPH_BOUNDARY_ARTIFACT_FILE`, and
+  preserves Custodian fail-closed behavior.
 
 ## Recent Decisions
 

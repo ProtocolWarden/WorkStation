@@ -14,5 +14,7 @@ def test_base_compose_has_no_ninerouter_service() -> None:
 
 
 def test_startup_flow_only_documents_current_stack_setup() -> None:
-    startup = (REPO_ROOT / "docs" / "startup-flow.md").read_text(encoding="utf-8")
+    startup = (REPO_ROOT / "docs" / "operations" / "startup-flow.md").read_text(
+        encoding="utf-8"
+    )
     assert "SwitchBoard" in startup

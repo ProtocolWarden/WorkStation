@@ -80,7 +80,7 @@ canonical public source of truth for ecosystem-wide ownership doctrine.
 Day-to-day runbook material for operating the local stack.
 
 - [operations/runbook.md](operations/runbook.md) — Day-to-day operational runbook
-  (start/stop/health/troubleshoot).
+  (start/stop/health/troubleshoot, plus the Custodian boundary-artifact wrapper).
 - [operations/archon-setup.md](operations/archon-setup.md) — Archon stack
   bring-up and validation.
 - [operations/local-lane-setup.md](operations/local-lane-setup.md) — Local lane
