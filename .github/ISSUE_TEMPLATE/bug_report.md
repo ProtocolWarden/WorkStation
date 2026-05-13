@@ -28,7 +28,7 @@ What actually happened.
 - OS: 
 - Docker version: 
 - Docker Compose version: 
-- WorkStation version / commit: 
+- PlatformDeployment version / commit:
 
 ## Stack Output
 

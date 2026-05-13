@@ -19,7 +19,7 @@ How you imagine it working. Include config or command examples if relevant.
 
 ## Startup Authority Check
 
-WorkStation is the sole startup authority. Confirm this change stays within that boundary:
+PlatformDeployment is the deployment/topography overlay owner. Confirm this change stays within that boundary:
 
 - [ ] No planning, routing, or execution logic introduced
 - [ ] New services are started via `up.sh` or compose, not independently
