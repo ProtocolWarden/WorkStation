@@ -13,6 +13,7 @@ _Update after each meaningful chunk of progress. Keep it short and actionable._
 
 ## Done
 
+- [x] **Plane database backup/restore** — `scripts/backup-plane.sh` (pg_dump → `~/sync/platform/backups/`, 10-dump rotation) and `scripts/restore-plane.sh` (drop/recreate DB, stop/start app services). Credentials from `plane.env`. (2026-05-17)
 - [x] **Archon compose profile** — `compose/profiles/archon.yml` builds from sibling `ProtocolWarden/Archon` clone, exposes `PORT_ARCHON` (default 3000), persists state under `runtime/archon`, health-checks `GET /api/health`. Docs in `docs/operations/archon-setup.md`. (2026-05-06)
 
 ---

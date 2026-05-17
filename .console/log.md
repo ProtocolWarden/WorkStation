@@ -17,6 +17,20 @@ and restored by `scripts/setup-secrets.sh`. Full SyncingSolution feature set:
 - `syncthing/version` — pinned version (1.27.12); fleet upgrade = bump + re-run
 - 30 pytest tests (subprocess + unit + mock); Custodian clean; pre-push wired
 
+## 2026-05-17 — Add backup-plane and restore-plane scripts
+
+Added `scripts/backup-plane.sh` and `scripts/restore-plane.sh` to cover the
+PostgreSQL database gap — `plane.env` was already synced but the DB data was not.
+
+- `backup-plane.sh`: pg_dump from `plane-db` container, gzips output to
+  `~/sync/platform/backups/plane_<timestamp>.sql.gz`, rotates to keep 10 most
+  recent dumps (override with `PLANE_BACKUP_KEEP`). Reads DB credentials from
+  `runtime/plane/plane-app/plane.env` (falls back to `plane/plane/plane`).
+  `PLATFORM_BACKUPS_DIR` overrides destination.
+- `restore-plane.sh`: accepts a dump path or defaults to latest in backup dir.
+  Prompts for confirmation, stops Plane app services, drops/recreates the DB,
+  loads the dump, restarts services. Same credential and directory overrides.
+
 ## 2026-05-17 — Add backup-secrets and setup-secrets scripts
 
 Added `scripts/backup-secrets.sh` and `scripts/setup-secrets.sh` to manage the four gitignored live config files (`.env`, `config/switchboard/policy.yaml`, `config/workstation/endpoints.yaml`, `runtime/plane/plane-app/plane.env`). Backup copies files to `~/sync/platform/config/` (flat-named with `__` separators). Setup symlinks them back into place from that dir. Both scripts respect `PLATFORM_SECRETS_DIR` env override.
