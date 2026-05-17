@@ -1,5 +1,22 @@
 # Mission Log
 
+## 2026-05-17 — SyncingSolution fleet management repo bootstrapped
+
+Companion repo `SyncingSolution` created and wired as the canonical Syncthing
+management layer for the platform. PlatformDeployment's secrets are the
+`platform-config` Syncthing folder — populated by `scripts/backup-secrets.sh`
+and restored by `scripts/setup-secrets.sh`. Full SyncingSolution feature set:
+
+- `devices.yaml` — machine and folder registry (4 machines, 6 folders)
+- `scripts/setup-syncthing.py` — configures Syncthing via REST API from registry
+- `syncthing/install.py` (Typer + Rich CLI) — version-pinned install/upgrade with
+  config archiving; `check` and `list` subcommands; Rich progress bar + table
+- `syncthing/install.sh` / `install.ps1` — 3-line shims to the Python CLI
+- `syncthing/tray.py` (pystray + Pillow) — cross-platform tray app; terminal
+  detection covers KDE/XFCE/MATE/Tilix/GNOME/Mint; Windows uses CREATE_NEW_CONSOLE
+- `syncthing/version` — pinned version (1.27.12); fleet upgrade = bump + re-run
+- 30 pytest tests (subprocess + unit + mock); Custodian clean; pre-push wired
+
 ## 2026-05-17 — Add backup-secrets and setup-secrets scripts
 
 Added `scripts/backup-secrets.sh` and `scripts/setup-secrets.sh` to manage the four gitignored live config files (`.env`, `config/switchboard/policy.yaml`, `config/workstation/endpoints.yaml`, `runtime/plane/plane-app/plane.env`). Backup copies files to `~/sync/platform/config/` (flat-named with `__` separators). Setup symlinks them back into place from that dir. Both scripts respect `PLATFORM_SECRETS_DIR` env override.
