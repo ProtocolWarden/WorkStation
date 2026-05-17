@@ -262,6 +262,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    logging.basicConfig(format="%(message)s", level=logging.INFO)
     parser = build_parser()
     args = parser.parse_args()
 
