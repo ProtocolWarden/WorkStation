@@ -62,18 +62,10 @@ def cmd_secrets_setup(args: argparse.Namespace) -> int:
             continue
 
         dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+        _LOG.info("restored: %s", rel)
 
-        if dst.exists() and not dst.is_symlink():
-            _LOG.warning("%s is a regular file — skipping (remove manually to replace with symlink)", rel)
-            continue
-
-        if dst.is_symlink():
-            dst.unlink()
-
-        dst.symlink_to(src)
-        _LOG.info("linked: %s → %s", src, dst)
-
-    _LOG.info("done — secrets linked into repo")
+    _LOG.info("done — secrets copied into repo")
     return 0
 
 

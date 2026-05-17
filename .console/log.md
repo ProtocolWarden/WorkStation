@@ -1,5 +1,11 @@
 # Mission Log
 
+## 2026-05-17 — secrets_cli: replace symlinks with copy
+
+`cmd_secrets_setup` was creating symlinks from the PD repo into `~/sync/`.
+Symlinks break on Windows (requires Developer Mode) and in Docker bind mounts.
+Changed to `shutil.copy2` to match the copy-based pattern used throughout SS.
+
 ## 2026-05-17 — SyncingSolution fleet management repo bootstrapped
 
 Companion repo `SyncingSolution` created and wired as the canonical Syncthing
