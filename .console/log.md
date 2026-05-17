@@ -166,3 +166,8 @@ truth; pre-push catches regressions before they hit GitHub.
 
 - Added CLAUDE.md to .gitignore
 - Added .custodian/tmp*.yaml to exclude custodian audit temp files
+
+## 2026-05-17 — README: fix secrets setup description (symlink → copy)
+
+Two lines in the CLI Reference still said "Symlink files from sync dir → repo positions".
+Fixed to "Copy files from sync dir → repo positions" to match the actual implementation.

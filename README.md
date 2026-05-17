@@ -271,12 +271,12 @@ Manages the four gitignored config files (`plane.env`, `.env`, `policy.yaml`,
 | Command | What it does |
 |---------|--------------|
 | `secrets backup` | Copy live files from repo → sync dir (flat-named) |
-| `secrets setup` | Symlink files from sync dir → repo positions |
-| `secrets list` | Show backup and symlink status for each file |
+| `secrets setup` | Copy files from sync dir → repo positions |
+| `secrets list` | Show what is present in the sync dir |
 
 ```bash
-python -m platform_deployment_cli secrets backup   # before switching machines
-python -m platform_deployment_cli secrets setup    # on a new machine after sync
+python -m platform_deployment_cli secrets backup   # before switching machines or after editing secrets
+python -m platform_deployment_cli secrets setup    # on a new machine after ~/sync/ has synced
 python -m platform_deployment_cli secrets list
 ```
 
