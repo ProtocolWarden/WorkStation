@@ -17,6 +17,24 @@ and restored by `scripts/setup-secrets.sh`. Full SyncingSolution feature set:
 - `syncthing/version` — pinned version (1.27.12); fleet upgrade = bump + re-run
 - 30 pytest tests (subprocess + unit + mock); Custodian clean; pre-push wired
 
+## 2026-05-17 — Unify all scripts into platform_deployment_cli
+
+All shell scripts now have a corresponding CLI entry point. New subcommand
+groups and top-level commands:
+
+- `plane up/down/status` — delegates to `scripts/plane.sh` (lifecycle)
+- `plane backup/restore/list` — pg_dump with timestamped rotation
+- `secrets backup/setup/list` — sync gitignored config files to/from `~/sync/platform/config/`
+- `workers start/stop/status/restart` — OperationsCenter watcher lifecycle via OC script
+- `logs [service] [--tail N]` — docker compose log tailing
+- `restart` — down + up
+- `ensure-up` — start only if not already healthy
+
+New modules: `plane_cli.py`, `secrets_cli.py`, `workers_cli.py`.
+New env vars documented in `.env.example`: `PLATFORM_BACKUPS_DIR`,
+`PLANE_BACKUP_KEEP`, `PLATFORM_SECRETS_DIR`, `OPERATIONS_CENTER_ROOT`,
+`POSTGRES_USER/PASSWORD/DB` (override-only, public docker defaults).
+
 ## 2026-05-17 — Add backup-plane and restore-plane scripts
 
 Added `scripts/backup-plane.sh` and `scripts/restore-plane.sh` to cover the

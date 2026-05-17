@@ -60,6 +60,10 @@ audit:
   c13_allowed_paths:
     - "tools/platform_deployment_cli/local_manifest.py"
     - "tools/platform_deployment_cli/config.py"
+    - "tools/platform_deployment_cli/plane_cli.py"
+    - "tools/platform_deployment_cli/secrets_cli.py"
+    - "tools/platform_deployment_cli/workers_cli.py"
+    - "tools/platform_deployment_cli/main.py"
   exclude_paths:
     T1:
       - "tools/platform_deployment_cli/**"
@@ -73,7 +77,14 @@ audit:
     D3:
       # CLI mains exit via SystemExit / sys.exit() — they don't return.
       - tools/platform_deployment_cli/main.py
+    C32:
+      # _DEFAULT_PG_PASSWORD = "plane" is the public docker-compose default,
+      # not a secret. Real creds come from plane.env or env overrides.
+      - tools/platform_deployment_cli/plane_cli.py
     D11:
       # cmd_lane_status / cmd_lane_health are sibling CLI commands sharing
       # the read-and-display shape — typology by class.
       - tools/platform_deployment_cli/lane_cli.py
+      # cmd_plane_up/down/status are one-line wrappers over _plane_sh() with
+      # identical shape — typology by class.
+      - tools/platform_deployment_cli/plane_cli.py
