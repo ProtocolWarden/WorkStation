@@ -109,15 +109,15 @@ def cmd_plane_backup(args: argparse.Namespace) -> int:
     timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     outfile = dest / f"plane_{timestamp}.sql.gz"
 
-    _LOG.info("dumping %s from plane-db → %s", creds["POSTGRES_DB"], outfile)
+    _LOG.info("dumping %s from plane-app-plane-db-1 → %s", creds["POSTGRES_DB"], outfile)
 
+    pg_env = ["-e", f"PGPASSWORD={creds['POSTGRES_PASSWORD']}"]
     dump_cmd = [
-        "docker", "exec", "plane-db",
+        "docker", "exec", *pg_env, "plane-app-plane-db-1",
         "pg_dump", "-U", creds["POSTGRES_USER"], creds["POSTGRES_DB"],
     ]
-    env = {**os.environ, "PGPASSWORD": creds["POSTGRES_PASSWORD"]}
 
-    result = subprocess.run(dump_cmd, stdout=subprocess.PIPE, env=env, timeout=600)
+    result = subprocess.run(dump_cmd, stdout=subprocess.PIPE, timeout=600)
     if result.returncode != 0:
         _LOG.error("pg_dump failed")
         outfile.unlink(missing_ok=True)
@@ -157,7 +157,7 @@ def cmd_plane_restore(args: argparse.Namespace) -> int:
         return 1
 
     _LOG.info("restoring from: %s", dump_file)
-    _LOG.info("target: %s on plane-db", creds["POSTGRES_DB"])
+    _LOG.info("target: %s on plane-app-plane-db-1", creds["POSTGRES_DB"])
 
     if not getattr(args, "yes", False):
         answer = input(f"\nthis will DROP and recreate '{creds['POSTGRES_DB']}'. continue? [y/N] ")
@@ -165,13 +165,13 @@ def cmd_plane_restore(args: argparse.Namespace) -> int:
             _LOG.info("aborted")
             return 0
 
-    env = {**os.environ, "PGPASSWORD": creds["POSTGRES_PASSWORD"]}
+    pg_env = ["-e", f"PGPASSWORD={creds['POSTGRES_PASSWORD']}"]
 
     _LOG.info("stopping Plane app services...")
     subprocess.run(
         ["docker", "compose", "-f", str(_PLANE_DIR / "docker-compose.yaml"),
          "--env-file", str(_PLANE_ENV), "stop", *_PLANE_APP_SERVICES],
-        env=env, timeout=120,
+        timeout=120,
     )
 
     _LOG.info("dropping and recreating database...")
@@ -180,9 +180,9 @@ def cmd_plane_restore(args: argparse.Namespace) -> int:
         f'CREATE DATABASE "{creds["POSTGRES_DB"]}" OWNER "{creds["POSTGRES_USER"]}";'
     )
     result = subprocess.run(
-        ["docker", "exec", "plane-db",
+        ["docker", "exec", *pg_env, "plane-app-plane-db-1",
          "psql", "-U", creds["POSTGRES_USER"], "-d", "postgres", "-c", drop_sql],
-        env=env, timeout=60,
+        timeout=60,
     )
     if result.returncode != 0:
         _LOG.error("failed to recreate database")
@@ -193,9 +193,9 @@ def cmd_plane_restore(args: argparse.Namespace) -> int:
         data = gz.read()
 
     result = subprocess.run(
-        ["docker", "exec", "-i", "plane-db",
+        ["docker", "exec", "-i", *pg_env, "plane-app-plane-db-1",
          "psql", "-U", creds["POSTGRES_USER"], "-d", creds["POSTGRES_DB"], "-q"],
-        input=data, env=env, timeout=600,
+        input=data, timeout=600,
     )
     if result.returncode != 0:
         _LOG.error("psql load failed")
@@ -205,7 +205,7 @@ def cmd_plane_restore(args: argparse.Namespace) -> int:
     subprocess.run(
         ["docker", "compose", "-f", str(_PLANE_DIR / "docker-compose.yaml"),
          "--env-file", str(_PLANE_ENV), "start", *_PLANE_APP_SERVICES],
-        env=env, timeout=120,
+        timeout=120,
     )
 
     _LOG.info("done — restore complete from %s", dump_file.name)

@@ -1,5 +1,14 @@
 # Mission Log
 
+## 2026-05-17 — fix: plane_cli container name, PGPASSWORD, logging, __main__
+
+- `plane-db` → `plane-app-plane-db-1` in all `docker exec`/`docker compose` calls
+- `PGPASSWORD` now passed via `docker exec -e` flag rather than `subprocess.run(env=...)`
+  (env= sets the local process env, not inside the container)
+- Removed stale `env=env` from the restart `subprocess.run` call (undefined var)
+- Added `logging.basicConfig` to `main()` so CLI output is actually visible
+- Created `tools/platform_deployment_cli/__main__.py` so `python -m platform_deployment_cli` works
+
 ## 2026-05-17 — secrets_cli: replace symlinks with copy
 
 `cmd_secrets_setup` was creating symlinks from the PD repo into `~/sync/`.
