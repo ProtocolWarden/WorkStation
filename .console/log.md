@@ -1,5 +1,9 @@
 # Mission Log
 
+## 2026-05-17 — Add backup-secrets and setup-secrets scripts
+
+Added `scripts/backup-secrets.sh` and `scripts/setup-secrets.sh` to manage the four gitignored live config files (`.env`, `config/switchboard/policy.yaml`, `config/workstation/endpoints.yaml`, `runtime/plane/plane-app/plane.env`). Backup copies files to `~/sync/platform/config/` (flat-named with `__` separators). Setup symlinks them back into place from that dir. Both scripts respect `PLATFORM_SECRETS_DIR` env override.
+
 ## 2026-05-13 — WorkStation → PlatformDeployment hard cutover
 
 - Renamed all remaining `WorkStation`/`workstation`/`WORKSTATION` references to `PlatformDeployment` in scripts, compose files, and tests.
