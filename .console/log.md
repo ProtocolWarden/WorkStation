@@ -17,6 +17,14 @@ and restored by `scripts/setup-secrets.sh`. Full SyncingSolution feature set:
 - `syncthing/version` — pinned version (1.27.12); fleet upgrade = bump + re-run
 - 30 pytest tests (subprocess + unit + mock); Custodian clean; pre-push wired
 
+## 2026-05-17 — Update README with full CLI surface
+
+Replaced the old Scripts table and Python CLI section with a unified CLI
+Reference covering all subcommand groups: stack lifecycle, lane, plane,
+secrets, workers. Quick Start updated to use `python -m platform_deployment_cli`.
+Local Lane section now cross-references the CLI Reference instead of
+duplicating commands.
+
 ## 2026-05-17 — Unify all scripts into platform_deployment_cli
 
 All shell scripts now have a corresponding CLI entry point. New subcommand

@@ -17,10 +17,9 @@ are asking "where does this service run?", the answer lives here. If you are ask
 ## What this repo is
 
 - Service Dockerfiles and compose manifests for SwitchBoard, Plane, archon, and aider_local tiny models
-- Lifecycle scripts (`up.sh`, `down.sh`) and worker shims (`workers.sh`)
+- Lifecycle scripts and worker shims (backing the CLI)
 - Port assignments, environment injection, health checks
-- Local CLI helpers under `tools/platform_deployment_cli/` for lane config
-  and stack health
+- A unified CLI under `tools/platform_deployment_cli/` covering the full operator surface
 - Deployment and operator docs under `docs/`
 
 ## What this repo is not
@@ -75,10 +74,10 @@ cp config/platformdeployment/services.example.yaml    config/platformdeployment/
 cp config/platformdeployment/ports.example.yaml       config/platformdeployment/ports.yaml
 
 # 3. Start the stack
-./scripts/up.sh
+python -m platform_deployment_cli up
 
 # 4. Verify health
-./scripts/health.sh
+python -m platform_deployment_cli health
 ```
 
 On Windows (PowerShell):
@@ -122,18 +121,9 @@ lint fixes, simple edits, and documentation tasks.
 ```bash
 # Configure (copy example, set enabled: true, configure model endpoints)
 cp config/platformdeployment/local_lane.example.yaml config/platformdeployment/local_lane.yaml
-
-# Check lane status
-python -m platform_deployment_cli lane status aider_local
-
-# Start managed model services (if start_command is configured)
-python -m platform_deployment_cli lane start aider_local
-
-# Stop managed services
-python -m platform_deployment_cli lane stop aider_local
 ```
 
-Lane states: `disabled` → `configured` → `starting` → `ready` | `unhealthy` | `failed`
+Lane management is via the `lane` subcommand — see [CLI Reference → Lane](#lane--aider_local-ai-execution-lane).
 
 For full setup and troubleshooting, see
 [`docs/operations/local-lane-setup.md`](docs/operations/local-lane-setup.md).
@@ -200,29 +190,114 @@ All client traffic targets SwitchBoard (`:20401`).
 
 ---
 
-## Scripts
+## CLI Reference
 
-| Script                      | What it does                                  |
-|-----------------------------|-----------------------------------------------|
-| `up.sh` / `up.ps1`          | Start the stack in detached mode              |
-| `down.sh` / `down.ps1`      | Stop and remove containers                    |
-| `restart.sh` / `restart.ps1`| Stop then start the stack                     |
-| `health.sh` / `health.ps1`  | Curl health endpoints; exit 0 if all healthy  |
-| `status.sh` / `status.ps1`  | Health + compose state + resource usage       |
-| `logs.sh` / `logs.ps1`      | Stream compose logs (optional: service name)  |
-| `bootstrap.ps1`             | First-time setup (copy .env, pull images)     |
+All operator actions are available through the Python CLI. Scripts in `scripts/` back the CLI
+and can still be called directly when needed (e.g. on Windows before Python is available).
 
 ```bash
-# Restart
-./scripts/restart.sh
-
-# Tail all logs
-./scripts/logs.sh
-
-# Tail logs for one service
-./scripts/logs.sh switchboard
-./scripts/logs.sh switchboard 100  # last 100 lines
+python -m platform_deployment_cli <command>
 ```
+
+### Stack lifecycle
+
+| Command | What it does |
+|---------|--------------|
+| `up` | Start the stack in detached mode |
+| `down` | Stop and remove containers |
+| `restart` | Stop then start the stack |
+| `ensure-up` | Start only if not already healthy; no-op if healthy |
+| `logs [service]` | Stream compose logs for all services or one (`--tail N`) |
+| `health [--json]` | Check health endpoints; exit 0 if all healthy |
+| `status [--json]` | Aggregate status summary |
+
+```bash
+python -m platform_deployment_cli up
+python -m platform_deployment_cli restart
+python -m platform_deployment_cli logs
+python -m platform_deployment_cli logs switchboard --tail 100
+python -m platform_deployment_cli health --json
+python -m platform_deployment_cli status
+```
+
+### Lane — aider_local AI execution lane
+
+Manages the `aider_local` lane: Ollama serving a local model + aider wired to it.
+
+| Command | What it does |
+|---------|--------------|
+| `lane start [lane]` | Start local model services |
+| `lane stop [lane]` | Stop local model services |
+| `lane status [lane]` | Show lane state and model health |
+| `lane health [lane]` | Live health check |
+| `lane doctor [lane]` | Full pre-flight check (config, binary, Ollama, models) |
+
+```bash
+python -m platform_deployment_cli lane status
+python -m platform_deployment_cli lane doctor
+python -m platform_deployment_cli lane start
+```
+
+Lane states: `disabled` → `configured` → `starting` → `ready` | `unhealthy` | `failed`
+
+### Plane — project tracker lifecycle and backup
+
+| Command | What it does |
+|---------|--------------|
+| `plane up` | Install (if needed) and start Plane |
+| `plane down` | Stop Plane containers |
+| `plane status` | Check whether Plane is reachable |
+| `plane backup` | pg_dump Plane DB → `~/sync/platform/backups/` (timestamped, 10-dump rotation) |
+| `plane restore [dump]` | Restore DB from a dump file (latest if omitted); prompts for confirmation |
+| `plane list` | List available database dumps with sizes |
+
+```bash
+python -m platform_deployment_cli plane up
+python -m platform_deployment_cli plane backup
+python -m platform_deployment_cli plane list
+python -m platform_deployment_cli plane restore
+python -m platform_deployment_cli plane restore ~/sync/platform/backups/plane_20260517T143022Z.sql.gz
+```
+
+DB credentials are read from `runtime/plane/plane-app/plane.env` (overridable via
+`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`). Dump destination overridable
+via `PLATFORM_BACKUPS_DIR`. Rotation count via `PLANE_BACKUP_KEEP` (default: 10).
+
+### Secrets — synced config files
+
+Manages the four gitignored config files (`plane.env`, `.env`, `policy.yaml`,
+`endpoints.yaml`) via `~/sync/platform/config/` as the sync intermediary.
+
+| Command | What it does |
+|---------|--------------|
+| `secrets backup` | Copy live files from repo → sync dir (flat-named) |
+| `secrets setup` | Symlink files from sync dir → repo positions |
+| `secrets list` | Show backup and symlink status for each file |
+
+```bash
+python -m platform_deployment_cli secrets backup   # before switching machines
+python -m platform_deployment_cli secrets setup    # on a new machine after sync
+python -m platform_deployment_cli secrets list
+```
+
+Sync dir overridable via `PLATFORM_SECRETS_DIR` (default: `~/sync/platform/config/`).
+
+### Workers — OperationsCenter watcher lifecycle
+
+| Command | What it does |
+|---------|--------------|
+| `workers start` | Start all OperationsCenter watcher roles |
+| `workers stop` | Stop all watcher roles |
+| `workers status` | Print watcher role status |
+| `workers restart` | Stop then start all watcher roles |
+
+```bash
+python -m platform_deployment_cli workers start
+python -m platform_deployment_cli workers status
+```
+
+OC checkout path defaults to `~/Documents/GitHub/OperationsCenter`; override with
+`OPERATIONS_CENTER_ROOT`.
 
 ---
 
@@ -266,30 +341,6 @@ cp config/platformdeployment/local_lane.example.yaml  config/platformdeployment/
 ```
 
 Live config files are excluded from version control (see `.gitignore`). Only `.example.*` variants are committed.
-
----
-
-## Python CLI
-
-```bash
-# Install dependencies (PyYAML + optional httpx)
-pip install pyyaml httpx
-
-# Commands
-python -m platform_deployment_cli up
-python -m platform_deployment_cli down
-python -m platform_deployment_cli health
-python -m platform_deployment_cli health --json
-python -m platform_deployment_cli status
-python -m platform_deployment_cli status --json
-
-# Local lane commands
-python -m platform_deployment_cli lane status aider_local
-python -m platform_deployment_cli lane health aider_local
-python -m platform_deployment_cli lane start aider_local
-python -m platform_deployment_cli lane stop aider_local
-python -m platform_deployment_cli lane status --json aider_local
-```
 
 ---
 
