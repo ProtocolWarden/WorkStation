@@ -1,5 +1,12 @@
 # Mission Log
 
+## 2026-05-17 — fix: complete platform backup coverage (OC configs)
+
+Full audit of gitignored live configs across PD, OC, PlatformManifest.
+PlatformManifest has none. PD's 4 files were already covered. OC was missing
+`config/plane_task_template.local.md` — added to SS backup_cli. All configs
+now in ~/sync/platform/config/. second-linux needs `setup platform` to restore.
+
 ## 2026-05-17 — second-linux (dev-latitudee7470) machine setup
 
 Brought up PlatformDeployment stack on `dev-latitudee7470` (second Linux machine, Manjaro).
