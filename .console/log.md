@@ -1,5 +1,21 @@
 # Mission Log
 
+## 2026-05-17 — second-linux (dev-latitudee7470) machine setup
+
+Brought up PlatformDeployment stack on `dev-latitudee7470` (second Linux machine, Manjaro).
+
+- `python -m syncing_solution setup all` restored PD `.env`, switchboard policy,
+  endpoints, `plane.env`, VF config/assets/backups from `~/sync/` (Syncthing fleet)
+- `bash scripts/up.sh` started stack: SwitchBoard built from source (first run),
+  Plane started via `plane.sh up` (PLANE_ENABLED=true in .env)
+- SyncingSolution updated to also backup/restore OC local config +
+  managed_repos in the platform backup pipeline (SS commit 712a325)
+- OC `.env.operations-center.local` and `config/operations_center.local.yaml`
+  not yet in sync — run `python -m syncing_solution backup platform` from primary
+  machine to push them, then `setup platform` here will restore them
+
+
+
 ## 2026-05-17 — fix: plane_cli container name, PGPASSWORD, logging, __main__
 
 - `plane-db` → `plane-app-plane-db-1` in all `docker exec`/`docker compose` calls
