@@ -9,7 +9,7 @@ _Update after each meaningful chunk of progress. Keep it short and actionable._
 
 ## Up Next
 
-- [ ] **OC config restore on second-linux** — run `python -m syncing_solution backup platform` from primary machine to push `.env.operations-center.local` + `config/operations_center.local.yaml` + `managed_repos/` to sync, then `setup platform` on second-linux to restore them. Until then OC watchers will not start on this machine.
+- [x] **OC config restore on second-linux** — full audit done; `config/plane_task_template.local.md` was the only gap. SS backup_cli now covers all gitignored live configs: PD (4 files) + OC (5 items incl. managed_repos/ tree). `backup platform` run and synced. second-linux needs `python -m syncing_solution setup platform` to restore. (2026-05-17)
 - [ ] **Archon real workflow integration (OC-side)** — the compose profile is in place and the OC adapter does a health probe, but actual workflow dispatch is not wired. Archon's API is conversation-driven and async (`POST /api/workflows/{name}/run` with `{conversationId, message}` returns 202; results come via `GET /api/workflows/runs/{runId}` polling or `GET /api/stream/{conversationId}` SSE). Needs a design doc deciding: how does `ExecutionRequest.goal_text` map to a conversation message? Per-task vs reused conversationId? OC's policy semantics for `approval_required`? Owner: OperationsCenter, with this compose profile as the deployment dependency.
 
 ## Done
