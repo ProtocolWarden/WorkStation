@@ -50,17 +50,18 @@ read -r -p "this will DROP and recreate '$POSTGRES_DB'. continue? [y/N] " confir
 
 echo "stopping Plane app services..."
 docker compose -f "$COMPOSE_DIR/docker-compose.yaml" --env-file "$ENV_FILE" \
-    stop web api worker beat-worker space admin live 2>/dev/null || true
+    stop web api worker beat-worker space admin live migrator 2>/dev/null || true
 
 echo "dropping and recreating database..."
-docker exec plane-db \
+docker compose -f "$COMPOSE_DIR/docker-compose.yaml" --env-file "$ENV_FILE" exec -T plane-db \
     env PGPASSWORD="$POSTGRES_PASSWORD" \
     psql -U "$POSTGRES_USER" -d postgres \
+    -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${POSTGRES_DB}' AND pid <> pg_backend_pid();" \
     -c "DROP DATABASE IF EXISTS \"$POSTGRES_DB\";" \
     -c "CREATE DATABASE \"$POSTGRES_DB\" OWNER \"$POSTGRES_USER\";"
 
 echo "loading dump..."
-gunzip -c "$DUMP_FILE" | docker exec -i plane-db \
+gunzip -c "$DUMP_FILE" | docker compose -f "$COMPOSE_DIR/docker-compose.yaml" --env-file "$ENV_FILE" exec -T plane-db \
     env PGPASSWORD="$POSTGRES_PASSWORD" \
     psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -q
 
