@@ -135,11 +135,11 @@ holds runtime types (`RuntimeInvocation`, `RuntimeResult`, `ArtifactDescriptor`)
 **Does not own:**
 - Implementation, transport, scheduling, adapters, model integration
 
-Consumer repos (OperationsCenter, SwitchBoard, OperatorConsole, ExecutorRuntime)
+Consumer repos (OperationsCenter, SwitchBoard, OperatorConsole, CoreRunner)
 import these types directly; OC additionally maps them to internal Pydantic
 models via `cxrp_mapper.py`.
 
-### ExecutorRuntime
+### CoreRunner
 
 Generic runtime mechanics — dispatches RxP `RuntimeInvocation` by
 `runtime_kind` to a registered runner.
@@ -156,7 +156,7 @@ Generic runtime mechanics — dispatches RxP `RuntimeInvocation` by
 - Source/fork tracking (belongs to SourceRegistry)
 
 OC backend adapters (kodo, archon, openclaw, direct_local, aider_local) all
-delegate subprocess execution through ExecutorRuntime.
+delegate subprocess execution through CoreRunner.
 
 ### SourceRegistry
 
@@ -169,7 +169,7 @@ upstream-sync intent.
   state, patch records, poll/push intent, CLI
 
 **Does not own:**
-- Subprocess execution (ExecutorRuntime), workflow harness (Archon),
+- Subprocess execution (CoreRunner), workflow harness (Archon),
   fork pushing — SR records intent; the operator pushes
 
 OperationsCenter consumes SR as a library.

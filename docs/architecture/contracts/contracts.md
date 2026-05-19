@@ -40,7 +40,7 @@ read CxRP types directly at boundaries (e.g. SwitchBoard HTTP, persisted run
 artifacts) and use OC's internal Pydantic types only within the OC service
 layer.
 
-SwitchBoard, OperatorConsole, and ExecutorRuntime depend on CxRP/RxP
+SwitchBoard, OperatorConsole, and CoreRunner depend on CxRP/RxP
 directly (no `operations-center` dependency required).
 
 ---

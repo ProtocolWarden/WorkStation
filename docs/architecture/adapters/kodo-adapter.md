@@ -18,7 +18,7 @@ kodo was chosen as the seed adapter because it:
 
 The adapter established the pattern; archon, openclaw, direct_local, and
 aider_local followed the same structure. All five now delegate subprocess
-execution through ExecutorRuntime via RxP `RuntimeInvocation` (kodo and the
+execution through CoreRunner via RxP `RuntimeInvocation` (kodo and the
 local lanes use `runtime_kind="subprocess"`; archon and openclaw use
 `runtime_kind="manual"`).
 
@@ -37,7 +37,7 @@ local lanes use `runtime_kind="subprocess"`; archon and openclaw use
 ## What the adapter does not own
 
 - Subprocess execution mechanics (process-group safety, timeout enforcement,
-  stdout/stderr capture) — that is `ExecutorRuntime`'s job
+  stdout/stderr capture) — that is `CoreRunner`'s job
 - Routing policy — that is SwitchBoard's job
 - Task proposal generation — that is OperationsCenter domain logic
 - Local model hosting — that is PlatformDeployment's job
@@ -147,8 +147,8 @@ If `goal_file_path` is not set in the request, the mapper derives it as
 - writes the goal file before running
 - injects `OPENAI_API_BASE` into subprocess env when `switchboard_url` is set
   (so kodo worker agents route through SwitchBoard)
-- builds an RxP `RuntimeInvocation` and delegates to `ExecutorRuntime.run()` —
-  ExecutorRuntime's `SubprocessRunner` owns process-group management,
+- builds an RxP `RuntimeInvocation` and delegates to `CoreRunner.run()` —
+  CoreRunner's `SubprocessRunner` owns process-group management,
   SIGTERM/SIGKILL on timeout, stdout/stderr capture, and exit-code normalization
 - measures wall-clock duration
 - cleans up the goal file after run (even on failure)

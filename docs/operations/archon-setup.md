@@ -7,7 +7,7 @@ remains for `StubArchonAdapter` in tests only.
 
 > **Status (2026-05-07):** workflow dispatch is **shipped** end-to-end — see
 > [archon-real-workflow-integration.md](../architecture/adapters/archon-real-workflow-integration.md)
-> for the design and `Real-API findings` section. OC #85 + ExecutorRuntime #6
+> for the design and `Real-API findings` section. OC #85 + CoreRunner #6
 > landed the dispatcher; live-validation against a real container the same
 > day surfaced two mapping corrections (now folded back).
 

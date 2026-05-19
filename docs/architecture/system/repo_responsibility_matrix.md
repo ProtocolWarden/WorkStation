@@ -271,7 +271,7 @@ OpenClaw (optional)
                 └─invokes─► SwitchBoard (lane selection)
                 └─consumes─► CxRP (orchestration contracts)
                 └─consumes─► SourceRegistry (fork tracking, library)
-                └─dispatches via─► ExecutorRuntime
+                └─dispatches via─► CoreRunner
                                      ├─consumes─► RxP (runtime contracts)
                                      └─runs adapters─► kodo / archon / openclaw / direct_local / aider_local
                                                          └─each─► claude_cli / codex_cli / aider_local lane
@@ -292,7 +292,7 @@ Custodian
 | Repo | Role | Consumed by |
 |------|------|-------------|
 | **CxRP** | Orchestration contracts | OperationsCenter, SwitchBoard, OperatorConsole |
-| **RxP** | Runtime contracts | OperationsCenter, ExecutorRuntime |
-| **ExecutorRuntime** | Generic runtime mechanics; dispatch-by-runtime_kind | OperationsCenter (every backend adapter) |
+| **RxP** | Runtime contracts | OperationsCenter, CoreRunner |
+| **CoreRunner** | Generic runtime mechanics; dispatch-by-runtime_kind | OperationsCenter (every backend adapter) |
 | **SourceRegistry** | Source/fork tracking | OperationsCenter (library) |
 | **Custodian** | Audit framework | Every repo (via `.custodian/config.yaml`) |

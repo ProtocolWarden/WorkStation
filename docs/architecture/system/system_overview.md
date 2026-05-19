@@ -24,8 +24,8 @@ the local infrastructure running.
 | **SwitchBoard** | Execution-lane selector. Evaluates a declarative policy and routes each task to the appropriate coding lane. |
 | **OperationsCenter** | Decision and execution engine. Observes repos, generates insights, proposes work, consumes routing, enforces policy, dispatches backend adapters, and drives the autonomy loop. |
 | **CxRP** | Contract-only protocol. Canonical orchestration types: `TaskProposal`, `LaneDecision`, `ExecutionRequest`, `ExecutionResult`. Consumed by OperationsCenter, SwitchBoard, OperatorConsole. |
-| **RxP** | Contract-only protocol. Canonical runtime types: `RuntimeInvocation`, `RuntimeResult`, `ArtifactDescriptor`. Consumed by ExecutorRuntime. |
-| **ExecutorRuntime** | Generic runtime mechanics. Dispatches RxP `RuntimeInvocation` by `runtime_kind` to a registered runner (subprocess / manual / HTTP). All OperationsCenter backend adapters (kodo, archon, openclaw, direct_local, aider_local) delegate subprocess execution through ER. |
+| **RxP** | Contract-only protocol. Canonical runtime types: `RuntimeInvocation`, `RuntimeResult`, `ArtifactDescriptor`. Consumed by CoreRunner. |
+| **CoreRunner** | Generic runtime mechanics. Dispatches RxP `RuntimeInvocation` by `runtime_kind` to a registered runner (subprocess / manual / HTTP). All OperationsCenter backend adapters (kodo, archon, openclaw, direct_local, aider_local) delegate subprocess execution through ER. |
 | **SourceRegistry** | Source and fork tracking. Resolves named source dependencies, verifies expected SHAs across install kinds, records local-fork patches. Consumed as a library by OperationsCenter. |
 | **Custodian** | Cross-repo audit and maintenance toolkit. Detector framework + plugin loader; consumer repos extend with their own `_custodian/` overlays. |
 | **Policy** | Pre-execution guardrail layer (inside OperationsCenter). Evaluates canonical proposals and routing decisions, then allows, warns, requires review, or blocks. |
@@ -67,7 +67,7 @@ the local infrastructure running.
 │                                                             │
 │  build ExecutionRequest → policy gate → adapter dispatch    │
 │                          ↓ (RxP RuntimeInvocation)          │
-│                  ExecutorRuntime (subprocess/manual/HTTP)   │
+│                  CoreRunner (subprocess/manual/HTTP)   │
 └──────────────┬─────────────────────┬───────────────────────┘
                │                     │                    │
                ▼                     ▼                    ▼
@@ -213,7 +213,7 @@ kodo was the seed backend integration: clean headless subprocess via Claude
 Agent SDK and Codex SDK, structured exit-code signals, easy to wrap. It
 established the adapter pattern, then archon, openclaw, direct_local, and
 aider_local followed. All five now delegate subprocess execution through
-ExecutorRuntime via RxP `RuntimeInvocation`.
+CoreRunner via RxP `RuntimeInvocation`.
 
 ### Decision C — Archon is optional and bounded
 
