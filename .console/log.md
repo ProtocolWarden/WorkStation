@@ -1,5 +1,18 @@
 # Mission Log
 
+## 2026-05-18 — chore(custodian): allow workspace_cli in c13, document PLATFORM_MANIFEST_PATH
+
+Added workspace_cli.py to .custodian/config.yaml c13_allowed_paths (consistent
+with all other CLI modules that hold env-override path reads). Added
+PLATFORM_MANIFEST_PATH to .env.example to clear E1. Custodian now clean.
+
+## 2026-05-18 — feat(cli): add workspace clone-all command
+
+Added `pd workspace clone-all` (and `pd repos clone-all` alias) to the CLI.
+Reads PlatformManifest's `platform_manifest.yaml` for the canonical repo list,
+clones missing repos into `~/Documents/GitHub/<canonical_name>`, skips existing
+ones, and optionally pulls with `--pull`. New module: `workspace_cli.py`.
+
 ## 2026-05-17 — fix: complete platform backup coverage (OC configs)
 
 Full audit of gitignored live configs across PD, OC, PlatformManifest.

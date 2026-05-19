@@ -64,6 +64,7 @@ audit:
     - "tools/platform_deployment_cli/secrets_cli.py"
     - "tools/platform_deployment_cli/workers_cli.py"
     - "tools/platform_deployment_cli/main.py"
+    - "tools/platform_deployment_cli/workspace_cli.py"
   exclude_paths:
     T1:
       - "tools/platform_deployment_cli/**"
