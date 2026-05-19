@@ -203,3 +203,7 @@ truth; pre-push catches regressions before they hit GitHub.
 
 Two lines in the CLI Reference still said "Symlink files from sync dir → repo positions".
 Fixed to "Copy files from sync dir → repo positions" to match the actual implementation.
+
+### ADR 0005 — Remove Archon compose profile (2026-05-18)
+Deleted compose/profiles/archon.yml per ADR 0005 decision to retire Archon backend.
+Archon replaced by DagExecutor (github.com/ProtocolWarden/DagExecutor).
