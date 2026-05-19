@@ -1,5 +1,11 @@
 # Mission Log
 
+## 2026-05-18 — chore(custodian): allow workspace_cli in c13, document PLATFORM_MANIFEST_PATH
+
+Added workspace_cli.py to .custodian/config.yaml c13_allowed_paths (consistent
+with all other CLI modules that hold env-override path reads). Added
+PLATFORM_MANIFEST_PATH to .env.example to clear E1. Custodian now clean.
+
 ## 2026-05-18 — feat(cli): add workspace clone-all command
 
 Added `pd workspace clone-all` (and `pd repos clone-all` alias) to the CLI.
