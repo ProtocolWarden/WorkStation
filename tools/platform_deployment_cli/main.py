@@ -24,6 +24,7 @@ from .plane_cli import (
 from .secrets_cli import cmd_secrets_backup, cmd_secrets_list, cmd_secrets_setup
 from .status import aggregate_status
 from .workers_cli import cmd_workers_restart, cmd_workers_start, cmd_workers_status, cmd_workers_stop
+from .workspace_cli import cmd_workspace_clone_all
 
 _LOG = logging.getLogger(__name__)
 
@@ -257,6 +258,37 @@ def build_parser() -> argparse.ArgumentParser:
         return 0
 
     p_workers.set_defaults(func=_workers_help)
+
+    # -- Workspace subcommand group --------------------------------------------
+    def _build_workspace_subparser(parent_sub, name: str, help_text: str):
+        p_ws = parent_sub.add_parser(name, help=help_text)
+        ws_sub = p_ws.add_subparsers(dest=f"{name}_action", metavar="<action>")
+
+        p_clone_all = ws_sub.add_parser(
+            "clone-all",
+            help="Clone all PlatformManifest repos into ~/Documents/GitHub/.",
+        )
+        p_clone_all.add_argument(
+            "--pull",
+            action="store_true",
+            help="Pull (--ff-only) repos that already exist locally.",
+        )
+        p_clone_all.set_defaults(func=cmd_workspace_clone_all)
+
+        def _ws_help(args):
+            p_ws.print_help()
+            return 0
+
+        p_ws.set_defaults(func=_ws_help)
+        return p_ws
+
+    _build_workspace_subparser(
+        sub, "workspace", "Manage the local workspace (clone/sync repos)."
+    )
+    # repos is a discoverable alias for workspace
+    _build_workspace_subparser(
+        sub, "repos", "Alias for 'workspace' — manage local repo clones."
+    )
 
     return parser
 
